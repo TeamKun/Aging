@@ -1,0 +1,6 @@
+name: Aging
+version: ${project.version}
+main: net.kunmc.lab.aging.Aging
+api-version: 1.16
+authors: [ chanmo7na ]
+description: 老化クラフト
