@@ -1,8 +1,10 @@
 package net.kunmc.lab.aging;
 
+import net.kunmc.lab.listener.PlayerEventHandler;
 import net.kunmc.lab.task.AgingTask;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -28,6 +30,7 @@ public class Aging extends JavaPlugin {
     private final static String METAKEY_GENERATION = "generation";
 
     private BukkitTask task;
+    private PlayerEventHandler handler;
 
     @Override
     public void onEnable() {
@@ -42,11 +45,15 @@ public class Aging extends JavaPlugin {
 
     public void startGame() {
         initGame();
+        handler = new PlayerEventHandler();
+        getServer().getPluginManager().registerEvents(handler, this);
         task = new AgingTask(this).runTaskTimer(this, 20, 20);
     }
 
     public void stopGame() {
         task.cancel();
+        HandlerList.unregisterAll(handler);
+        handler = null;
     }
 
     private void initGame() {
