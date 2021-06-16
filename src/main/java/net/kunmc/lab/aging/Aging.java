@@ -1,5 +1,6 @@
 package net.kunmc.lab.aging;
 
+import net.kunmc.lab.constants.ConfigConstants;
 import net.kunmc.lab.listener.PlayerEventHandler;
 import net.kunmc.lab.task.AgingTask;
 import org.bukkit.Bukkit;
@@ -16,19 +17,6 @@ import java.util.Objects;
 import java.util.Random;
 
 public class Aging extends JavaPlugin {
-    // 各世代の最高年齢
-    private final static int MAX_BABY_AGE = 5;
-    private final static int MAX_KIDS_AGE = 19;
-    private final static int MAX_YOUNG_AGE = 29;
-    private final static int MAX_ADULT_AGE = 65;
-    private final static int MAX_ELDERLY_AGE = 99;
-
-    private final static double DAMAGE = 20.0d;
-
-    private final static String METAKEY_AGE = "age";
-    private final static String METAKEY_IS_AGING = "is_aging";
-    private final static String METAKEY_GENERATION = "generation";
-
     private BukkitTask task;
     private PlayerEventHandler handler;
 
@@ -65,10 +53,10 @@ public class Aging extends JavaPlugin {
     }
 
     public void initPlayer(Player player) {
-        int age = new Random().nextInt(MAX_ELDERLY_AGE);
-        setMetaData(player, METAKEY_AGE, age);
-        setMetaData(player, METAKEY_GENERATION, getGeneration(age));
-        setMetaData(player, METAKEY_IS_AGING, true);
+        int age = new Random().nextInt(ConfigConstants.MAX_ELDERLY_AGE);
+        setMetaData(player, ConfigConstants.METAKEY_AGE, age);
+        setMetaData(player, ConfigConstants.METAKEY_GENERATION, getGeneration(age));
+        setMetaData(player, ConfigConstants.METAKEY_IS_AGING, true);
     }
 
     /**
@@ -84,7 +72,7 @@ public class Aging extends JavaPlugin {
             Player player = (Player) o_player;
 
             // 年齢固定の場合は老化させない
-            if((boolean)getMetaData(player,METAKEY_IS_AGING)) {
+            if((boolean)getMetaData(player, ConfigConstants.METAKEY_IS_AGING)) {
                 return;
             }
 
@@ -95,12 +83,12 @@ public class Aging extends JavaPlugin {
 
             // 老衰
             if(0 > generation) {
-                player.damage(DAMAGE);
+                player.damage(ConfigConstants.DAMAGE);
                 return;
             }
 
             // 世代更新がない場合は次ユーザーへ
-            if(generation == (int)getMetaData(player, METAKEY_GENERATION)) {
+            if(generation == (int)getMetaData(player, ConfigConstants.METAKEY_GENERATION)) {
                 return;
             }
 
@@ -109,8 +97,8 @@ public class Aging extends JavaPlugin {
     }
 
     public int addAge(Player player) {
-        int age = (int)getMetaData(player, METAKEY_AGE);
-        setMetaData(player, METAKEY_AGE, age++);
+        int age = (int)getMetaData(player, ConfigConstants.METAKEY_AGE);
+        setMetaData(player, ConfigConstants.METAKEY_AGE, age++);
 
         return age;
     }
@@ -135,19 +123,19 @@ public class Aging extends JavaPlugin {
      * @return int 世代(0-4), 老人の最大歳を超えた場合は-1を返す
      */
     public int getGeneration(int age) {
-        if(MAX_BABY_AGE >= age) {
+        if(ConfigConstants.MAX_BABY_AGE >= age) {
             return 0;
         }
-        if(MAX_KIDS_AGE >= age) {
+        if(ConfigConstants.MAX_KIDS_AGE >= age) {
             return 1;
         }
-        if(MAX_YOUNG_AGE >= age) {
+        if(ConfigConstants.MAX_YOUNG_AGE >= age) {
             return 2;
         }
-        if(MAX_ADULT_AGE >= age) {
+        if(ConfigConstants.MAX_ADULT_AGE >= age) {
             return 3;
         }
-        if(MAX_ELDERLY_AGE >= age) {
+        if(ConfigConstants.MAX_ELDERLY_AGE >= age) {
             return 4;
         }
 
@@ -155,7 +143,7 @@ public class Aging extends JavaPlugin {
     }
 
     public void updGeneration(Player player, int age){
-        setMetaData(player, METAKEY_GENERATION, getGeneration(age));
+        setMetaData(player, ConfigConstants.METAKEY_GENERATION, getGeneration(age));
 
         // TODO: 世代別に異なる設定を追加
     }
