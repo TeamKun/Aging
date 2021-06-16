@@ -120,26 +120,26 @@ public class Aging extends JavaPlugin {
 
     /**
      * 現在の年齢がどの世代に該当するか判定する
-     * @return int 世代(0-4), 老人の最大歳を超えた場合は-1を返す
+     * @return int 世代, 老人の最大歳を超えた場合はマイナスの値を返す
      */
     public int getGeneration(int age) {
         if(ConfigConstants.MAX_BABY_AGE >= age) {
-            return 0;
+            return ConfigConstants.BABY;
         }
         if(ConfigConstants.MAX_KIDS_AGE >= age) {
-            return 1;
+            return ConfigConstants.KIDS;
         }
         if(ConfigConstants.MAX_YOUNG_AGE >= age) {
-            return 2;
+            return ConfigConstants.YOUNG;
         }
         if(ConfigConstants.MAX_ADULT_AGE >= age) {
-            return 3;
+            return ConfigConstants.ADULT;
         }
         if(ConfigConstants.MAX_ELDERLY_AGE >= age) {
-            return 4;
+            return ConfigConstants.ELDERLY;
         }
 
-        return -1;
+        return ConfigConstants.DEATH;
     }
 
     public void updGeneration(Player player, int age){

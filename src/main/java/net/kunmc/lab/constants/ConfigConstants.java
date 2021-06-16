@@ -16,5 +16,14 @@ public final class ConfigConstants {
     public final static int MAX_ADULT_AGE = 65;
     public final static int MAX_ELDERLY_AGE = 99;
 
+    // 世代
+    public final static int BABY = 0;
+    public final static int KIDS = 1;
+    public final static int YOUNG = 2;
+    public final static int ADULT = 3;
+    public final static int ELDERLY = 4;
+    public final static int DEATH = -1;
+
+
     private ConfigConstants(){}
 }
