@@ -1,21 +1,19 @@
 package net.kunmc.lab.task;
 
-import net.kunmc.lab.player.PlayerManager;
-import org.bukkit.plugin.java.JavaPlugin;
+import net.kunmc.lab.aging.Aging;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class AgingTask extends BukkitRunnable {
-    private JavaPlugin plugin;
+    private Aging plugin;
 
-    public AgingTask(JavaPlugin plugin) {
+    public AgingTask(Aging plugin) {
         this.plugin = plugin;
     }
 
     @Override
     public void run() {
         try {
-            PlayerManager.getInstance().agingPlayer();
-            // FIXME: プレイヤーの老化処理はこちらに書いた方が良いかも
+            plugin.aging();
         }catch(IllegalArgumentException iae) {
             //TODO: if plugin is null
         }catch(IllegalStateException ise) {
