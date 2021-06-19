@@ -4,3 +4,7 @@ main: net.kunmc.lab.aging.Aging
 api-version: 1.16
 authors: [ chanmo7na ]
 description: 老化クラフト
+commands:
+  aging:
+    description: Aging Main Command
+    usage: /aging <start|stop>

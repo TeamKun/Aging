@@ -14,10 +14,10 @@ public class AgingTask extends BukkitRunnable {
     public void run() {
         try {
             plugin.aging();
-        }catch(IllegalArgumentException iae) {
-            //TODO: if plugin is null
         }catch(IllegalStateException ise) {
-            //TODO: of this was already scheduled
+            plugin.getLogger().info("this task was already scheduled.");
+        }catch(Exception e) {
+            plugin.getLogger().info("task catched exception.");
         }
     }
 }

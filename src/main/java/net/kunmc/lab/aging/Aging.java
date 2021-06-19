@@ -1,8 +1,13 @@
 package net.kunmc.lab.aging;
 
+import net.kunmc.lab.command.CommandHandler;
+import net.kunmc.lab.constants.CommandConstants;
 import net.kunmc.lab.constants.ConfigConstants;
 import net.kunmc.lab.listener.PlayerEventHandler;
 import net.kunmc.lab.task.AgingTask;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.LinearComponents;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -10,30 +15,36 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
-public class Aging extends JavaPlugin {
+import static net.kyori.adventure.text.Component.text;
+
+public final class Aging extends JavaPlugin {
+    public static Aging plugin;
     private BukkitTask task;
     private PlayerEventHandler handler;
 
     @Override
     public void onEnable() {
-        // Plugin startup logic
+        plugin = this;
 
+        CommandHandler commandHandler = new CommandHandler(this);
+        getCommand(CommandConstants.MAIN_COMMAND).setExecutor(commandHandler);
+        //getCommand(CommandConstants.MAIN_COMMAND).setTabCompleter(commandHandler);
     }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        plugin = null;
     }
 
     public void startGame() {
         initGame();
-        handler = new PlayerEventHandler();
+        handler = new PlayerEventHandler(this);
         getServer().getPluginManager().registerEvents(handler, this);
         task = new AgingTask(this).runTaskTimer(this, 20, 20);
     }
@@ -72,13 +83,13 @@ public class Aging extends JavaPlugin {
             Player player = (Player) o_player;
 
             // 年齢固定の場合は老化させない
-            if((boolean)getMetaData(player, ConfigConstants.METAKEY_IS_AGING)) {
+            if(!(boolean)getMetaData(player, ConfigConstants.METAKEY_IS_AGING)) {
                 return;
             }
 
-            int age = addAge(player);
-            updPlayerName(player);
+            //　TODO: 死んでいる場合は老化させない
 
+            int age = addAge(player);
             int generation = getGeneration(age);
 
             // 老衰
@@ -98,7 +109,11 @@ public class Aging extends JavaPlugin {
 
     public int addAge(Player player) {
         int age = (int)getMetaData(player, ConfigConstants.METAKEY_AGE);
-        setMetaData(player, ConfigConstants.METAKEY_AGE, age++);
+        setMetaData(player, ConfigConstants.METAKEY_AGE, ++age);
+
+        Component message = LinearComponents.linear(NamedTextColor.RED, text(player.getName() + " " + age + "歳 "));
+        player.displayName(message);
+        getServer().getLogger().info(player.getName() + " " + age + "歳 " + getMetaData(player, ConfigConstants.METAKEY_GENERATION) + "世代");
 
         return age;
     }
@@ -148,7 +163,9 @@ public class Aging extends JavaPlugin {
         // TODO: 世代別に異なる設定を追加
     }
 
-    public void updPlayerName(Player player) {
-        // TODO: 表示名の変更処理
+    public void resetAge(Player player) {
+        setMetaData(player, ConfigConstants.METAKEY_AGE, ConfigConstants.INIT_AGE);
+        updGeneration(player, ConfigConstants.INIT_AGE);
     }
+
 }

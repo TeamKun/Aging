@@ -24,6 +24,8 @@ public final class ConfigConstants {
     public final static int ELDERLY = 4;
     public final static int DEATH = -1;
 
+    // リスポーン時の年齢
+    public final static int INIT_AGE = 0;
 
     private ConfigConstants(){}
 }
