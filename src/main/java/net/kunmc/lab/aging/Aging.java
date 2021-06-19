@@ -1,8 +1,9 @@
 package net.kunmc.lab.aging;
 
 import net.kunmc.lab.command.CommandHandler;
-import net.kunmc.lab.constants.CommandConstants;
-import net.kunmc.lab.constants.ConfigConstants;
+import net.kunmc.lab.constants.CommandConst;
+import net.kunmc.lab.constants.ConfigConst;
+import net.kunmc.lab.constants.Generation;
 import net.kunmc.lab.listener.PlayerEventHandler;
 import net.kunmc.lab.task.AgingTask;
 import net.kyori.adventure.text.Component;
@@ -32,7 +33,7 @@ public final class Aging extends JavaPlugin {
         plugin = this;
 
         CommandHandler commandHandler = new CommandHandler(this);
-        getCommand(CommandConstants.MAIN_COMMAND).setExecutor(commandHandler);
+        getCommand(CommandConst.MAIN_COMMAND).setExecutor(commandHandler);
         //getCommand(CommandConstants.MAIN_COMMAND).setTabCompleter(commandHandler);
     }
 
@@ -64,10 +65,10 @@ public final class Aging extends JavaPlugin {
     }
 
     public void initPlayer(Player player) {
-        int age = new Random().nextInt(ConfigConstants.MAX_ELDERLY_AGE);
-        setMetaData(player, ConfigConstants.METAKEY_AGE, age);
-        setMetaData(player, ConfigConstants.METAKEY_GENERATION, getGeneration(age));
-        setMetaData(player, ConfigConstants.METAKEY_IS_AGING, true);
+        int age = new Random().nextInt(Generation.Type.ELDERLY.getMaxAge());
+        setAge(player, age);
+        setGeneration(player, Generation.getGeneration(age));
+        setIsAging(player, true);
     }
 
     /**
@@ -83,46 +84,48 @@ public final class Aging extends JavaPlugin {
             Player player = (Player) o_player;
 
             // 年齢固定の場合は老化させない
-            if(!(boolean)getMetaData(player, ConfigConstants.METAKEY_IS_AGING)) {
+            if(false == getIsAging(player)) {
                 return;
             }
 
             //　TODO: 死んでいる場合は老化させない
 
             int age = addAge(player);
-            int generation = getGeneration(age);
 
-            // 老衰
-            if(0 > generation) {
-                player.damage(ConfigConstants.DAMAGE);
-                return;
-            }
+            Generation.Type nowGeneration = getGeneration(player);
+            Generation.Type nextGeneration = Generation.getGeneration(age);
 
             // 世代更新がない場合は次ユーザーへ
-            if(generation == (int)getMetaData(player, ConfigConstants.METAKEY_GENERATION)) {
+            if(nowGeneration.equals(nextGeneration) ) {
                 return;
             }
 
-            updGeneration(player, age);
+            // 世代更新先がない場合は老衰とする
+            if(false == nowGeneration.hasNext()) {
+                player.damage(ConfigConst.DAMAGE);
+                return;
+            }
+
+            setGeneration(player, nowGeneration.nextGeneration);
         });
     }
 
     public int addAge(Player player) {
-        int age = (int)getMetaData(player, ConfigConstants.METAKEY_AGE);
-        setMetaData(player, ConfigConstants.METAKEY_AGE, ++age);
+        int age = getAge(player) + 1;
+        setAge(player, age);
 
         Component message = LinearComponents.linear(NamedTextColor.RED, text(player.getName() + " " + age + "歳 "));
         player.displayName(message);
-        getServer().getLogger().info(player.getName() + " " + age + "歳 " + getMetaData(player, ConfigConstants.METAKEY_GENERATION) + "世代");
+        getServer().getLogger().info(player.getName() + " " + age + "歳 " + getGeneration(player) + "世代");
 
         return age;
     }
 
-    public void setMetaData(Player player, String key, Object value) {
+    private void setMetaData(Player player, String key, Object value) {
         player.setMetadata(key, new FixedMetadataValue(this, value));
     }
 
-    public Object getMetaData(Player player, String key) {
+    private Object getMetaData(Player player, String key) {
         List<MetadataValue> values = player.getMetadata(key);
         for(MetadataValue value : values) {
             // このプラグインで設定したデータのみ返却する
@@ -133,39 +136,33 @@ public final class Aging extends JavaPlugin {
         return null;
     }
 
-    /**
-     * 現在の年齢がどの世代に該当するか判定する
-     * @return int 世代, 老人の最大歳を超えた場合はマイナスの値を返す
-     */
-    public int getGeneration(int age) {
-        if(ConfigConstants.MAX_BABY_AGE >= age) {
-            return ConfigConstants.BABY;
-        }
-        if(ConfigConstants.MAX_KIDS_AGE >= age) {
-            return ConfigConstants.KIDS;
-        }
-        if(ConfigConstants.MAX_YOUNG_AGE >= age) {
-            return ConfigConstants.YOUNG;
-        }
-        if(ConfigConstants.MAX_ADULT_AGE >= age) {
-            return ConfigConstants.ADULT;
-        }
-        if(ConfigConstants.MAX_ELDERLY_AGE >= age) {
-            return ConfigConstants.ELDERLY;
-        }
-
-        return ConfigConstants.DEATH;
+    public int getAge(Player player) {
+        return (int)getMetaData(player, ConfigConst.METAKEY_AGE);
     }
 
-    public void updGeneration(Player player, int age){
-        setMetaData(player, ConfigConstants.METAKEY_GENERATION, getGeneration(age));
+    public Generation.Type getGeneration(Player player) {
+        return (Generation.Type) getMetaData(player, ConfigConst.METAKEY_GENERATION);
+    }
 
-        // TODO: 世代別に異なる設定を追加
+    public boolean getIsAging(Player player) {
+        return (boolean)getMetaData(player, ConfigConst.METAKEY_IS_AGING);
+    }
+
+    public void setAge(Player player, int age) {
+        setMetaData(player, ConfigConst.METAKEY_AGE, age);
+    }
+
+    public void setGeneration(Player player, Generation.Type generation) {
+        setMetaData(player, ConfigConst.METAKEY_GENERATION, generation);
+    }
+
+    public void setIsAging(Player player, boolean isAging) {
+        setMetaData(player, ConfigConst.METAKEY_IS_AGING, isAging);
     }
 
     public void resetAge(Player player) {
-        setMetaData(player, ConfigConstants.METAKEY_AGE, ConfigConstants.INIT_AGE);
-        updGeneration(player, ConfigConstants.INIT_AGE);
+        setAge(player, ConfigConst.INIT_AGE);
+        setGeneration(player, Generation.Type.BABY);
     }
 
 }
