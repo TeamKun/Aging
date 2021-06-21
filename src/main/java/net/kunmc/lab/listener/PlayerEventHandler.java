@@ -1,12 +1,16 @@
 package net.kunmc.lab.listener;
 
 import net.kunmc.lab.aging.Aging;
+import net.kunmc.lab.constants.ConfigConst;
+import net.kunmc.lab.constants.Generation;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.LinearComponents;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
 
@@ -21,6 +25,25 @@ public class PlayerEventHandler implements Listener {
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent e){
         Player p = e.getPlayer();
+        if(false == Generation.Type.ELDERLY.equals(plugin.getGeneration(p))){
+            return;
+        }
+        if(false == p.isOnline()) {
+            return;
+        }
+        if( !(e.getFrom().getY() - e.getTo().getY() > 1) ) {
+            return;
+        }
+
+        // 2ブロック以上の段差から落ちたら死亡
+        EntityDamageEvent ede = new EntityDamageEvent(p, EntityDamageEvent.DamageCause.FALL, ConfigConst.DAMAGE);
+        Bukkit.getPluginManager().callEvent(ede);
+        if(ede.isCancelled()) {
+            return;
+        }
+
+        ede.getEntity().setLastDamageCause(ede);
+        p.damage(ConfigConst.DAMAGE);
     }
 
     @EventHandler
