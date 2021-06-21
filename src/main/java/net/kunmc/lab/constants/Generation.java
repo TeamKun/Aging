@@ -46,7 +46,7 @@ public class Generation {
         }
 
         public String getMessage() {
-            return "あなたは " + this.dispName + " になりました！";
+            return "あなたは " + this.dispName + " になりました。";
         }
 
     }

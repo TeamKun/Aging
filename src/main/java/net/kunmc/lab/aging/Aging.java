@@ -179,7 +179,11 @@ public final class Aging extends JavaPlugin {
         int rejuvenateAge = config.getInt(ConfigConst.REJUVENATE_AGE);
         int age = getAge(player) - rejuvenateAge;
         setAge(player, age);
+
+        // THINK: 世代跨ぎの時だけ呼び出しでもよいかも
         addGeneration(player, Generation.getGeneration(age));
+
+        player.sendMessage("昆布を食べたので" + rejuvenateAge + "歳若返った！[現在の年齢:" + age + "歳]");
     }
 
     private void setMetaData(Player player, String key, Object value) {
