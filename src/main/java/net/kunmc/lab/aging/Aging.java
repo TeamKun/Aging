@@ -6,10 +6,10 @@ import net.kunmc.lab.constants.ConfigConst;
 import net.kunmc.lab.constants.Generation;
 import net.kunmc.lab.listener.PlayerEventHandler;
 import net.kunmc.lab.task.AgingTask;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.LinearComponents;
+import net.kyori.adventure.text.*;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+import java.util.logging.Level;
 
 import static net.kyori.adventure.text.Component.text;
 
@@ -27,6 +28,7 @@ public final class Aging extends JavaPlugin {
     public static Aging plugin;
     private BukkitTask task;
     private PlayerEventHandler handler;
+    private FileConfiguration config;
 
     @Override
     public void onEnable() {
@@ -35,21 +37,30 @@ public final class Aging extends JavaPlugin {
         CommandHandler commandHandler = new CommandHandler(this);
         getCommand(CommandConst.MAIN_COMMAND).setExecutor(commandHandler);
         //getCommand(CommandConstants.MAIN_COMMAND).setTabCompleter(commandHandler);
+        config = getConfig();
     }
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
         plugin = null;
+        config = null;
     }
 
+    /**
+     * 老化クラフトの開始処理
+     */
     public void startGame() {
         initGame();
         handler = new PlayerEventHandler(this);
         getServer().getPluginManager().registerEvents(handler, this);
-        task = new AgingTask(this).runTaskTimer(this, 20, 20);
+
+        int period = config.getInt(ConfigConst.PERIOD);
+        task = new AgingTask(this).runTaskTimer(this, period, period);
     }
 
+    /**
+     * 老化クラフトの終了処理
+     */
     public void stopGame() {
         task.cancel();
         HandlerList.unregisterAll(handler);
@@ -106,10 +117,15 @@ public final class Aging extends JavaPlugin {
                 return;
             }
 
-            setGeneration(player, nowGeneration.nextGeneration);
+            addGeneration(player, nowGeneration.nextGeneration);
         });
     }
 
+    /**
+     * 年齢加算を行う
+     * @param player 年齢加算するプレイヤー
+     * @return 加算後の年齢
+     */
     public int addAge(Player player) {
         int age = getAge(player) + 1;
         setAge(player, age);
@@ -119,6 +135,44 @@ public final class Aging extends JavaPlugin {
         getServer().getLogger().info(player.getName() + " " + age + "歳 " + getGeneration(player) + "世代");
 
         return age;
+    }
+
+    /**
+     * 世代更新を行う
+     * @param player 世代更新するプレイヤー
+     * @param generation 更新先の世代
+     */
+    public void addGeneration(Player player, Generation.Type generation) {
+        try {
+            // 世代更新メッセージ
+            player.sendMessage(generation.getMessage());
+
+            // 歩行速度
+            float walkSpeed = (float) config.getDouble(generation.getPathName() + ConfigConst.WALK_SPEED);
+            player.setWalkSpeed(walkSpeed);
+
+            // HP
+            double maxHp = config.getDouble(generation.getPathName() + ConfigConst.MAX_HP);
+            player.setMaxHealth(maxHp);
+
+            // 空腹
+            int foodLevel = config.getInt(generation.getPathName() + ConfigConst.FOOD_LEVEL);
+            player.setFoodLevel(foodLevel);
+
+            setGeneration(player, generation);
+
+        } catch(IllegalArgumentException ie) {
+            getServer().getLogger().log(Level.WARNING, player + " :歩行速度の引数が範囲外の数値です[(float)-1~1]");
+        } catch (Exception e){
+            getServer().getLogger().log(Level.WARNING, e.getMessage());
+        }
+    }
+
+    public void resetAge(Player player) {
+        int init_age = config.getInt(ConfigConst.INIT_AGE);
+
+        setAge(player, init_age);
+        setGeneration(player, Generation.Type.BABY);
     }
 
     private void setMetaData(Player player, String key, Object value) {
@@ -159,10 +213,4 @@ public final class Aging extends JavaPlugin {
     public void setIsAging(Player player, boolean isAging) {
         setMetaData(player, ConfigConst.METAKEY_IS_AGING, isAging);
     }
-
-    public void resetAge(Player player) {
-        setAge(player, ConfigConst.INIT_AGE);
-        setGeneration(player, Generation.Type.BABY);
-    }
-
 }

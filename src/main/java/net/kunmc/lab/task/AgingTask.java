@@ -3,6 +3,8 @@ package net.kunmc.lab.task;
 import net.kunmc.lab.aging.Aging;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.logging.Level;
+
 public class AgingTask extends BukkitRunnable {
     private Aging plugin;
 
@@ -15,9 +17,9 @@ public class AgingTask extends BukkitRunnable {
         try {
             plugin.aging();
         }catch(IllegalStateException ise) {
-            plugin.getLogger().info("this task was already scheduled.");
+            plugin.getLogger().log(Level.WARNING, "このスレッドはすでにスケジュール済です");
         }catch(Exception e) {
-            plugin.getLogger().info("task catched exception.");
+            plugin.getLogger().log(Level.WARNING, e.getMessage());
         }
     }
 }

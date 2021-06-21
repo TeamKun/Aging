@@ -1,19 +1,21 @@
 package net.kunmc.lab.constants;
 public class Generation {
     public enum Type {
-        ELDERLY("elderly", 66, 99, null),
-        ADULT("adult", 30, 65, ELDERLY),
-        YOUNG("young", 20, 29, ADULT),
-        KIDS("kids", 6, 19, YOUNG),
-        BABY("baby", 0, 5, KIDS);
+        ELDERLY("elderly", "老人",66, 99, null),
+        ADULT("adult", "大人",30, 65, ELDERLY),
+        YOUNG("young", "若者",20, 29, ADULT),
+        KIDS("kids", "未成年",6, 19, YOUNG),
+        BABY("baby", "赤ちゃん",0, 5, KIDS);
 
         public final String name;
+        public final String dispName;
         public final int min_age;
         public final int max_age;
         public final Type nextGeneration;
 
-        Type(String name, int min_age, int max_age, Type nextGeneration) {
+        Type(String name, String dispName, int min_age, int max_age, Type nextGeneration) {
             this.name = name;
+            this.dispName = name;
             this.min_age = min_age;
             this.max_age = max_age;
             this.nextGeneration = nextGeneration;
@@ -21,6 +23,10 @@ public class Generation {
 
         public String getName() {
             return this.name;
+        }
+
+        public String getPathName() {
+            return this.name + "." ;
         }
 
         public int getMinAge() {
@@ -37,6 +43,10 @@ public class Generation {
 
         public boolean hasNext() {
             return this.nextGeneration == null ? false : true;
+        }
+
+        public String getMessage() {
+            return "あなたは " + this.dispName + " になりました！";
         }
 
     }

@@ -1,0 +1,25 @@
+# 老化クラフト全体で関わる設定値
+period: 20
+init_age: 0
+
+# 各世代別で異なる設定値
+baby:
+  walkspeed: 0.2
+  maxhp: 20
+  foodlevel: 20
+kids:
+  walkspeed: 1.0
+  maxhp: 20
+  foodlevel: 20
+young:
+  walkspeed: 0.2
+  maxhp: 20
+  foodlevel: 20
+adult:
+  walkspeed: 0.2
+  maxhp: 14
+  foodlevel: 14
+elderly:
+  walkspeed: -1.0
+  maxhp: 8
+  foodlevel: 8

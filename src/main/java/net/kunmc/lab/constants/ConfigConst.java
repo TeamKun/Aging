@@ -6,11 +6,16 @@ public final class ConfigConst {
     public final static String METAKEY_IS_AGING = "is_aging";
     public final static String METAKEY_GENERATION = "generation";
 
+    // config.yml読み出し時のkey
+    public final static String PERIOD = "period";
+    public final static String WALK_SPEED = "walkspeed";
+    public final static String MAX_HP = "maxhp";
+    public final static String FOOD_LEVEL = "foodlevel";
+
     // 最高年齢に到達時のダメージ
     public final static double DAMAGE = 20.0d;
 
-    // リスポーン時の年齢
-    public final static int INIT_AGE = 0;
+    public final static String INIT_AGE = "init_age";
 
     private ConfigConst(){}
 }
