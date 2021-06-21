@@ -172,7 +172,14 @@ public final class Aging extends JavaPlugin {
         int init_age = config.getInt(ConfigConst.INIT_AGE);
 
         setAge(player, init_age);
-        setGeneration(player, Generation.Type.BABY);
+        addGeneration(player, Generation.Type.BABY);
+    }
+
+    public void rejuvenateAge(Player player) {
+        int rejuvenateAge = config.getInt(ConfigConst.REJUVENATE_AGE);
+        int age = getAge(player) - rejuvenateAge;
+        setAge(player, age);
+        addGeneration(player, Generation.getGeneration(age));
     }
 
     private void setMetaData(Player player, String key, Object value) {

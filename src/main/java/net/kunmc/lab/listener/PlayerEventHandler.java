@@ -7,12 +7,14 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.LinearComponents;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.ItemStack;
 
 import static net.kyori.adventure.text.Component.text;
 
@@ -57,7 +59,12 @@ public class PlayerEventHandler implements Listener {
     }
     @EventHandler
     public void onPlayerItemConsume(PlayerItemConsumeEvent e) {
-        Player p = e.getPlayer();
+        ItemStack stack = e.getItem();
+
+        // 乾いた昆布を食べた時は若返る
+        if(Material.DRIED_KELP.equals(stack.getType()) ) {
+            plugin.rejuvenateAge(e.getPlayer());
+        }
     }
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent e) {
