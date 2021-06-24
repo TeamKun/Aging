@@ -9,6 +9,7 @@ import net.kunmc.lab.task.AgingTask;
 import net.kyori.adventure.text.*;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -16,10 +17,8 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+
+import java.util.*;
 import java.util.logging.Level;
 
 import static net.kyori.adventure.text.Component.text;
@@ -186,6 +185,17 @@ public final class Aging extends JavaPlugin {
         player.sendMessage("昆布を食べたので" + rejuvenateAge + "歳若返った！[現在の年齢:" + age + "歳]");
     }
 
+    public List<Material> canRejuvenateItems(Player player) {
+        Generation.Type generation = getGeneration(player);
+        ArrayList<Material> list = new ArrayList<Material>();
+
+        config.getStringList(generation.getPathName() + ConfigConst.REJUVENATE_ITEMS).forEach(name -> {
+            list.add(Material.getMaterial(name));
+        });
+
+        return list;
+    }
+
     private void setMetaData(Player player, String key, Object value) {
         player.setMetadata(key, new FixedMetadataValue(this, value));
     }
@@ -199,6 +209,17 @@ public final class Aging extends JavaPlugin {
             }
         }
         return null;
+    }
+
+    public List<Material> canEatItems(Player player) {
+        Generation.Type generation = getGeneration(player);
+        ArrayList<Material> list = new ArrayList<Material>();
+
+        config.getStringList(generation.getPathName() + ConfigConst.CANEAT).forEach(name -> {
+            list.add(Material.getMaterial(name));
+        });
+
+        return list;
     }
 
     public int getAge(Player player) {

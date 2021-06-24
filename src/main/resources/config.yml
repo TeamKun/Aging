@@ -2,6 +2,8 @@
 period: 20
 init_age: 0
 rejuvenate_age: 10
+rejuvenate_item:
+  - DRIED_KELP
 
 # 各世代別で異なる設定値
 baby:
@@ -24,3 +26,10 @@ elderly:
   walkspeed: -1.0
   maxhp: 8
   foodlevel: 8
+  caneat:
+    - BEETROOT_SOUP
+    - MUSHROOM_STEW
+    - RABBIT_STEW
+    - SUSPICIOUS_STEW
+    - BREAD
+    - BAKED_POTATO
