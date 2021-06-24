@@ -61,8 +61,8 @@ public class PlayerEventHandler implements Listener {
     public void onPlayerItemConsume(PlayerItemConsumeEvent e) {
         ItemStack stack = e.getItem();
 
-        // 乾いた昆布を食べた時は若返る
-        if(Material.DRIED_KELP.equals(stack.getType()) ) {
+        // 特定のアイテムを食べた時は若返る
+        if(plugin.canRejuvenateItems().equals(stack.getType()) ) {
             plugin.rejuvenateAge(e.getPlayer());
         }
     }
@@ -88,6 +88,7 @@ public class PlayerEventHandler implements Listener {
         ItemStack stack  = e.getItem();
         Material material = stack.getType();
 
+        // 食べられるアイテムの場合は何もせず終了
         for ( Material canEatMaterial : plugin.canEatItems(player)) {
             if(canEatMaterial.equals(material)) {
                 return;

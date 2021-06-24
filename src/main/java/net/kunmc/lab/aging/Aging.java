@@ -185,11 +185,10 @@ public final class Aging extends JavaPlugin {
         player.sendMessage("昆布を食べたので" + rejuvenateAge + "歳若返った！[現在の年齢:" + age + "歳]");
     }
 
-    public List<Material> canRejuvenateItems(Player player) {
-        Generation.Type generation = getGeneration(player);
+    public List<Material> canRejuvenateItems() {
         ArrayList<Material> list = new ArrayList<Material>();
 
-        config.getStringList(generation.getPathName() + ConfigConst.REJUVENATE_ITEMS).forEach(name -> {
+        config.getStringList(ConfigConst.REJUVENATE_ITEMS).forEach(name -> {
             list.add(Material.getMaterial(name));
         });
 
