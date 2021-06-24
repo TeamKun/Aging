@@ -1,13 +1,16 @@
 package net.kunmc.lab.listener;
 
+import com.google.common.eventbus.Subscribe;
 import net.kunmc.lab.aging.Aging;
 import net.kunmc.lab.constants.ConfigConst;
 import net.kunmc.lab.constants.Generation;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.LinearComponents;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.minecraft.server.v1_16_R3.ItemSaddle;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -76,5 +79,28 @@ public class PlayerEventHandler implements Listener {
     public void onPlayerRespawn(PlayerRespawnEvent e) {
         Player player = e.getPlayer();
         plugin.resetAge(player);
+    }
+
+    @EventHandler
+    public void onPlayerItemDamage(PlayerItemDamageEvent e) {
+        Player player = e.getPlayer();
+        if(false == Generation.Type.ELDERLY.equals(plugin.getGeneration(player))) {
+            return;
+        }
+
+        ItemStack stack  = e.getItem();
+        Material material = stack.getType();
+
+        if(Material.BEETROOT_SOUP.equals(material)
+        || Material.MUSHROOM_STEW.equals(material)
+        || Material.RABBIT_STEW.equals(material)
+        || Material.SUSPICIOUS_STEW.equals(material)
+        || Material.BREAD.equals(material)
+        || Material.BAKED_POTATO.equals(material)
+        ) {
+            return;
+        }
+        player.sendMessage(stack.displayName() + "は固くて食べられない！");
+        e.setCancelled(true);
     }
 }

@@ -132,7 +132,7 @@ public final class Aging extends JavaPlugin {
 
         Component message = LinearComponents.linear(NamedTextColor.RED, text(player.getName() + " " + age + "歳 "));
         player.displayName(message);
-        getServer().getLogger().info(player.getName() + " " + age + "歳 " + getGeneration(player) + "世代");
+        getServer().getLogger().info(player.getName() + " " + age + "歳(" + getGeneration(player) + ")");
 
         return age;
     }
