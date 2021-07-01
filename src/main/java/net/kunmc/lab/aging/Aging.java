@@ -195,6 +195,17 @@ public final class Aging extends JavaPlugin {
         return list;
     }
 
+    public boolean hasEndWord(Player player){
+        return config.contains(getGeneration(player).getPathName() + ConfigConst.ENDWORD);
+    }
+
+    public String getEndWord(Player player) {
+        if(hasEndWord(player)) {
+            return config.getString(getGeneration(player).getPathName() + ConfigConst.ENDWORD);
+        }
+        return "";
+    }
+
     private void setMetaData(Player player, String key, Object value) {
         player.setMetadata(key, new FixedMetadataValue(this, value));
     }

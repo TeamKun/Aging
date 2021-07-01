@@ -1,12 +1,14 @@
 package net.kunmc.lab.listener;
 
+import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kunmc.lab.aging.Aging;
 import net.kunmc.lab.constants.ConfigConst;
 import net.kunmc.lab.constants.Generation;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.LinearComponents;
+import net.kyori.adventure.text.*;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.Style;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -15,6 +17,13 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.io.BukkitObjectInputStream;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.Unmodifiable;
+
+import java.util.List;
+import java.util.function.Consumer;
 
 import static net.kyori.adventure.text.Component.text;
 
@@ -97,5 +106,19 @@ public class PlayerEventHandler implements Listener {
 
         player.sendMessage(stack.displayName() + "は固くて食べられない！");
         e.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onChat(AsyncPlayerChatEvent e) {
+        Player player = e.getPlayer();
+        new BukkitRunnable() {
+
+            @Override
+            public void run() {
+                if(plugin.hasEndWord(player)) {
+                    Bukkit.broadcastMessage(ChatColor.WHITE + e.getMessage() + plugin.getEndWord(player));
+                }
+            }
+        }.runTask(plugin);
     }
 }

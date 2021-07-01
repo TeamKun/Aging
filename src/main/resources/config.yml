@@ -10,6 +10,7 @@ baby:
   walkspeed: 0.2
   maxhp: 20
   foodlevel: 20
+  endword: "ばぶ"
 kids:
   walkspeed: 1.0
   maxhp: 20
