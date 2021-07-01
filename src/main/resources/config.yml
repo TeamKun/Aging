@@ -11,18 +11,22 @@ baby:
   maxhp: 20
   foodlevel: 20
   endword: "ばぶ"
+  useKanji: true
 kids:
   walkspeed: 1.0
   maxhp: 20
   foodlevel: 20
+  useKanji: true
 young:
   walkspeed: 0.2
   maxhp: 20
   foodlevel: 20
+  useKanji: true
 adult:
   walkspeed: 0.2
   maxhp: 14
   foodlevel: 14
+  useKanji: true
 elderly:
   walkspeed: -1.0
   maxhp: 8
@@ -34,3 +38,4 @@ elderly:
     - SUSPICIOUS_STEW
     - BREAD
     - BAKED_POTATO
+  useKanji: false

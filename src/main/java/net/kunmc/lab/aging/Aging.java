@@ -20,6 +20,8 @@ import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static net.kyori.adventure.text.Component.text;
 
@@ -204,6 +206,10 @@ public final class Aging extends JavaPlugin {
             return config.getString(getGeneration(player).getPathName() + ConfigConst.ENDWORD);
         }
         return "";
+    }
+
+    public boolean isNotUseChineseCharacter(Player player) {
+        return !config.getBoolean(getGeneration(player).getPathName() + ConfigConst.USE_CHINESE_CHARACTER);
     }
 
     private void setMetaData(Player player, String key, Object value) {

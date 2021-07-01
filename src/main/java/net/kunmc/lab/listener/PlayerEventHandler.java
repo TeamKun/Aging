@@ -115,9 +115,22 @@ public class PlayerEventHandler implements Listener {
 
             @Override
             public void run() {
-                if(plugin.hasEndWord(player)) {
-                    Bukkit.broadcastMessage(ChatColor.WHITE + e.getMessage() + plugin.getEndWord(player));
+                String message = e.getMessage();
+                // 漢字の入力制限
+                if (plugin.isNotUseChineseCharacter(player) && hasChineseCharacter(message)) {
+                    player.sendMessage("漢字は忘れてしまって発言できない！");
+                    e.setCancelled(true);
                 }
+                // 使用できない言葉を置換する
+
+                // 文末に言葉を追加
+                if (plugin.hasEndWord(player)) {
+                    Bukkit.broadcastMessage(ChatColor.WHITE + message + plugin.getEndWord(player));
+                }
+            }
+
+            public boolean hasChineseCharacter(String text) {
+                return text.matches(".*[一-龠].*");
             }
         }.runTask(plugin);
     }

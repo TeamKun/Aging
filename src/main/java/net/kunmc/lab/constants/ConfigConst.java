@@ -12,6 +12,8 @@ public final class ConfigConst {
     public final static String MAX_HP = "maxhp";
     public final static String FOOD_LEVEL = "foodlevel";
     public final static String CANEAT = "caneat";
+    public final static String ENDWORD = "endword";
+    public final static String USE_CHINESE_CHARACTER = "useKanji";
 
     // 最高年齢に到達時のダメージ
     public final static double DAMAGE = 20.0d;
@@ -19,5 +21,6 @@ public final class ConfigConst {
     public final static String INIT_AGE = "init_age";
     public final static String REJUVENATE_AGE ="rejuvenate";
     public final static String REJUVENATE_ITEMS = "rejuvenate_item";
+
     private ConfigConst(){}
 }
