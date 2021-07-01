@@ -121,7 +121,11 @@ public class PlayerEventHandler implements Listener {
                     player.sendMessage("漢字は忘れてしまって発言できない！");
                     e.setCancelled(true);
                 }
-                // 使用できない言葉を置換する
+                // 使用できないひらがなを置換する
+                if(plugin.isCheckHiragana(player)){
+                    String replaceMessage = getReplaceHiragana(message);
+                    Bukkit.broadcastMessage(ChatColor.WHITE + replaceMessage);
+                }
 
                 // 文末に言葉を追加
                 if (plugin.hasEndWord(player)) {
@@ -131,6 +135,11 @@ public class PlayerEventHandler implements Listener {
 
             public boolean hasChineseCharacter(String text) {
                 return text.matches(".*[一-龠].*");
+            }
+
+            public String getReplaceHiragana(String text) {
+                // TODO: か行・は行...の置換
+                return text;
             }
         }.runTask(plugin);
     }

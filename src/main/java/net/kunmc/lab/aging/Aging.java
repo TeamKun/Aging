@@ -212,6 +212,10 @@ public final class Aging extends JavaPlugin {
         return !config.getBoolean(getGeneration(player).getPathName() + ConfigConst.USE_CHINESE_CHARACTER);
     }
 
+    public boolean isCheckHiragana(Player player) {
+        return config.getBoolean(getGeneration(player).getPathName() + ConfigConst.CHECK_HIRAGANA);
+    }
+
     private void setMetaData(Player player, String key, Object value) {
         player.setMetadata(key, new FixedMetadataValue(this, value));
     }

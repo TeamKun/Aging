@@ -14,6 +14,7 @@ public final class ConfigConst {
     public final static String CANEAT = "caneat";
     public final static String ENDWORD = "endword";
     public final static String USE_CHINESE_CHARACTER = "useKanji";
+    public final static String CHECK_HIRAGANA = "checkHiragana";
 
     // 最高年齢に到達時のダメージ
     public final static double DAMAGE = 20.0d;
