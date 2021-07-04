@@ -4,9 +4,9 @@ import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kunmc.lab.aging.Aging;
 import net.kunmc.lab.constants.ConfigConst;
 import net.kunmc.lab.constants.Generation;
+import net.kunmc.lab.constants.HiraganaConverter;
 import net.kyori.adventure.text.*;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.Style;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -18,12 +18,6 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.io.BukkitObjectInputStream;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.jetbrains.annotations.Unmodifiable;
-
-import java.util.List;
-import java.util.function.Consumer;
 
 import static net.kyori.adventure.text.Component.text;
 
@@ -138,8 +132,7 @@ public class PlayerEventHandler implements Listener {
             }
 
             public String getReplaceHiragana(String text) {
-                // TODO: か行・は行...の置換
-                return text;
+                return HiraganaConverter.convertText(text);
             }
         }.runTask(plugin);
     }
