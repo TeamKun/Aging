@@ -17,12 +17,8 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
-
 import java.util.*;
 import java.util.logging.Level;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import static net.kyori.adventure.text.Component.text;
 
 public final class Aging extends JavaPlugin {
@@ -264,5 +260,14 @@ public final class Aging extends JavaPlugin {
 
     public void setIsAging(Player player, boolean isAging) {
         setMetaData(player, ConfigConst.METAKEY_IS_AGING, isAging);
+    }
+
+    public void setConfig(String key, Object value) {
+        config.set(key, value);
+        saveConfig();
+    }
+    public void setConfig(String key, String value){
+        // TODO: 設定値に応じたvalueの変換処理
+        this.setConfig(key, (String)value);
     }
 }
