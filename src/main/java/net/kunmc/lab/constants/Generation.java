@@ -15,7 +15,7 @@ public class Generation {
 
         Type(String name, String dispName, int min_age, int max_age, Type nextGeneration) {
             this.name = name;
-            this.dispName = name;
+            this.dispName = dispName;
             this.min_age = min_age;
             this.max_age = max_age;
             this.nextGeneration = nextGeneration;

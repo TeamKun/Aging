@@ -19,6 +19,8 @@ import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.List;
+
 import static net.kyori.adventure.text.Component.text;
 
 public class PlayerEventHandler implements Listener {
@@ -60,15 +62,7 @@ public class PlayerEventHandler implements Listener {
     public void onPlayerInteract(PlayerInteractEvent e) {
         Player p = e.getPlayer();
     }
-    @EventHandler
-    public void onPlayerItemConsume(PlayerItemConsumeEvent e) {
-        ItemStack stack = e.getItem();
 
-        // 特定のアイテムを食べた時は若返る
-        if(plugin.canRejuvenateItems().equals(stack.getType()) ) {
-            plugin.rejuvenateAge(e.getPlayer());
-        }
-    }
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent e) {
         Player player = e.getEntity();
@@ -82,23 +76,31 @@ public class PlayerEventHandler implements Listener {
     }
 
     @EventHandler
-    public void onPlayerItemDamage(PlayerItemDamageEvent e) {
+    public void onPlayerItemConsumeEvent(PlayerItemConsumeEvent e) {
         Player player = e.getPlayer();
-        if(false == Generation.Type.ELDERLY.equals(plugin.getGeneration(player))) {
+        Material material = e.getItem().getType();
+
+        // 若返りアイテム
+        for(Material rejuvenateItem : plugin.getRejuvenateItems()) {
+            if(rejuvenateItem.equals(material)) {
+                int age = plugin.rejuvenateAge(player);
+                player.sendMessage("昆布を食べたので10歳若返った！[現在の年齢:" + age + "歳]");
+                return;
+            }
+        }
+
+        // 食べられるアイテムに制限がない
+        if(plugin.isEatAllItem(player)) {
             return;
         }
 
-        ItemStack stack  = e.getItem();
-        Material material = stack.getType();
-
-        // 食べられるアイテムの場合は何もせず終了
         for ( Material canEatMaterial : plugin.canEatItems(player)) {
             if(canEatMaterial.equals(material)) {
                 return;
             }
         }
 
-        player.sendMessage(stack.displayName() + "は固くて食べられない！");
+        player.sendMessage("この食べ物は固くて食べられない！");
         e.setCancelled(true);
     }
 

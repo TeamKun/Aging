@@ -9,6 +9,7 @@ import net.kunmc.lab.task.AgingTask;
 import net.kyori.adventure.text.*;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -91,6 +92,10 @@ public final class Aging extends JavaPlugin {
         allPlayer.forEach((o_player) ->{
             Player player = (Player) o_player;
 
+            if(GameMode.CREATIVE == player.getGameMode()) {
+                return;
+            }
+
             // 年齢固定の場合は老化させない
             if(false == getIsAging(player)) {
                 return;
@@ -172,18 +177,17 @@ public final class Aging extends JavaPlugin {
         addGeneration(player, Generation.Type.BABY);
     }
 
-    public void rejuvenateAge(Player player) {
+    public int rejuvenateAge(Player player) {
         int rejuvenateAge = config.getInt(ConfigConst.REJUVENATE_AGE);
         int age = getAge(player) - rejuvenateAge;
         setAge(player, age);
 
         // THINK: 世代跨ぎの時だけ呼び出しでもよいかも
         addGeneration(player, Generation.getGeneration(age));
-
-        player.sendMessage("昆布を食べたので" + rejuvenateAge + "歳若返った！[現在の年齢:" + age + "歳]");
+        return age;
     }
 
-    public List<Material> canRejuvenateItems() {
+    public List<Material> getRejuvenateItems() {
         ArrayList<Material> list = new ArrayList<Material>();
 
         config.getStringList(ConfigConst.REJUVENATE_ITEMS).forEach(name -> {
@@ -232,10 +236,19 @@ public final class Aging extends JavaPlugin {
         ArrayList<Material> list = new ArrayList<Material>();
 
         config.getStringList(generation.getPathName() + ConfigConst.CANEAT).forEach(name -> {
-            list.add(Material.getMaterial(name));
+            Material material = Material.getMaterial(name);
+            if(null == material) {
+                return;
+            }
+            list.add(material);
         });
 
         return list;
+    }
+
+    public boolean isEatAllItem(Player player) {
+        Generation.Type generation = getGeneration(player);
+        return config.getStringList(generation.getPathName() + ConfigConst.CANEAT).isEmpty();
     }
 
     public int getAge(Player player) {

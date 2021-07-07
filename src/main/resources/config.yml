@@ -32,7 +32,7 @@ adult:
   useKanji: true
   checkHiragana: false
 elderly:
-  walkspeed: -1.0
+  walkspeed: 0.1
   maxhp: 8
   foodlevel: 8
   caneat:

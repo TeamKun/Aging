@@ -20,7 +20,7 @@ public final class ConfigConst {
     public final static double DAMAGE = 20.0d;
 
     public final static String INIT_AGE = "init_age";
-    public final static String REJUVENATE_AGE ="rejuvenate";
+    public final static String REJUVENATE_AGE ="rejuvenate_age";
     public final static String REJUVENATE_ITEMS = "rejuvenate_item";
 
     private ConfigConst(){}
