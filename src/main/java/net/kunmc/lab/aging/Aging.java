@@ -18,6 +18,11 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.ScoreboardManager;
+
 import java.util.*;
 import java.util.logging.Level;
 import static net.kyori.adventure.text.Component.text;
@@ -66,11 +71,21 @@ public final class Aging extends JavaPlugin {
     }
 
     private void initGame() {
-        Collection allPlayer = Bukkit.getOnlinePlayers();
-        allPlayer.forEach((o_player) ->{
-            Player player = (Player)o_player;
+        ScoreboardManager manager = Bukkit.getScoreboardManager();
+        Scoreboard board = manager.getMainScoreboard();
+
+        Objective objective = board.getObjective("GENERATION");
+        if(null == objective) {
+            objective = board.registerNewObjective("GENERATION", "generation");
+            objective.setDisplaySlot(DisplaySlot.BELOW_NAME);
+            objective.setDisplayName("/ 20");
+        }
+
+        for(Player player : Bukkit.getOnlinePlayers()) {
             initPlayer(player);
-        });
+            objective.setDisplayName("generation");
+
+        }
     }
 
     public void initPlayer(Player player) {
