@@ -5,6 +5,8 @@ public final class CommandConst {
 
     public final static String COMMAND_START = "start";
     public final static String COMMAND_STOP = "stop";
+    public final static String COMMAND_SUSPEND = "suspend";
+    public final static String COMMAND_RESTART = "restart";
 
     public final static String COMMAND_CONF = "conf";
     public final static String ARGS1_PERIOD = "period";

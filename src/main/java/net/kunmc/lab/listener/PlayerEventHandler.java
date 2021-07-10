@@ -16,10 +16,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import java.util.List;
 
 import static net.kyori.adventure.text.Component.text;
 
@@ -94,6 +91,7 @@ public class PlayerEventHandler implements Listener {
             return;
         }
 
+        // 食事制限がある場合は食べられるものかチェックする
         for ( Material canEatMaterial : plugin.canEatItems(player)) {
             if(canEatMaterial.equals(material)) {
                 return;
@@ -106,6 +104,7 @@ public class PlayerEventHandler implements Listener {
 
     @EventHandler
     public void onChat(AsyncPlayerChatEvent e) {
+        plugin.getLogger().info("AsyncPlayerChatEvent:");
         Player player = e.getPlayer();
         new BukkitRunnable() {
 

@@ -50,6 +50,14 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                 this.plugin.stopGame();
                 sender.sendMessage(ChatColor.GREEN + "info: 老化プラグイン が無効化されました");
                 break;
+            case CommandConst.COMMAND_SUSPEND:
+                this.plugin.suspend();
+                sender.sendMessage(ChatColor.GREEN + "info: 老化プラグイン が一時停止されました");
+                break;
+            case CommandConst.COMMAND_RESTART:
+                this.plugin.restart();
+                sender.sendMessage(ChatColor.GREEN + "info: 老化プラグイン が再開されました");
+                break;
             case CommandConst.COMMAND_CONF:
                 onConf(args);
                 break;

@@ -71,6 +71,15 @@ public final class Aging extends JavaPlugin {
         handler = null;
     }
 
+    public void suspend() {
+        task.cancel();
+    }
+
+    public void restart() {
+        int period = config.getInt(ConfigConst.PERIOD);
+        task = new AgingTask(this).runTaskTimer(this, period, period);
+    }
+
     private void initGame() {
         ScoreboardManager manager = Bukkit.getScoreboardManager();
         Scoreboard board = manager.getMainScoreboard();
@@ -119,7 +128,9 @@ public final class Aging extends JavaPlugin {
                 return;
             }
 
-            //　TODO: 死んでいる場合は老化させない
+            if(player.isDead()) {
+                return;
+            }
 
             int age = addAge(player);
 
@@ -200,7 +211,6 @@ public final class Aging extends JavaPlugin {
         int age = getAge(player) - rejuvenateAge;
         setAge(player, age);
 
-        // THINK: 世代跨ぎの時だけ呼び出しでもよいかも
         addGeneration(player, Generation.getGeneration(age));
         return age;
     }
