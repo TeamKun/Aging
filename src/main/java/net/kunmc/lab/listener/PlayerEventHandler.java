@@ -1,6 +1,5 @@
 package net.kunmc.lab.listener;
 
-import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kunmc.lab.aging.Aging;
 import net.kunmc.lab.constants.ConfigConst;
 import net.kunmc.lab.constants.Generation;
@@ -16,7 +15,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import static net.kyori.adventure.text.Component.text;
 
@@ -84,6 +82,7 @@ public class PlayerEventHandler implements Listener {
         for(Material rejuvenateItem : plugin.getRejuvenateItems()) {
             if(rejuvenateItem.equals(material)) {
                 int age = plugin.rejuvenateAge(player);
+                // TODO: マイナスにならないよう修正
                 player.sendMessage("昆布を食べたので10歳若返った！[現在の年齢:" + age + "歳]");
                 return;
             }
@@ -107,38 +106,38 @@ public class PlayerEventHandler implements Listener {
 
     @EventHandler
     public void onChat(AsyncPlayerChatEvent e) {
-        plugin.getLogger().info("AsyncPlayerChatEvent:");
+        if(e.isCancelled()) {
+            return;
+        }
         Player player = e.getPlayer();
-        new BukkitRunnable() {
+        String message = e.getMessage();
 
-            @Override
-            public void run() {
-                String message = e.getMessage();
-                // 漢字の入力制限
-                if (plugin.isNotUseChineseCharacter(player) && hasChineseCharacter(message)) {
-                    player.sendMessage(ChatColor.RED + "漢字は忘れてしまって発言できない！");
-                    e.setCancelled(true);
-                    return;
-                }
-                // 使用できないひらがなを置換する
-                if(plugin.isCheckHiragana(player)){
-                    String replaceMessage = getReplaceHiragana(message);
-                    Bukkit.broadcastMessage(ChatColor.WHITE + replaceMessage);
-                }
+        // 漢字の入力制限
+        if (plugin.isNotUseChineseCharacter(player) && hasChineseCharacter(message)) {
+            player.sendMessage(ChatColor.RED + "漢字は忘れてしまって発言できない！");
+            e.setCancelled(true);
+            return;
+        }
 
-                // 文末に言葉を追加
-                if (plugin.hasEndWord(player)) {
-                    Bukkit.broadcastMessage(ChatColor.WHITE + message + plugin.getEndWord(player));
-                }
+        // 使用できないひらがなを置換する
+        if(plugin.isCheckHiragana(player)){
+            e.setMessage(HiraganaConverter.convertText(message));
+            return;
+        }
+
+        // 特定の文字しか使用できない場合は文字数分置換する
+        if (plugin.hasEndWord(player)) {
+            String replacedText = "";
+            for(int i=0; i<message.length(); i++) {
+                replacedText = replacedText + plugin.getEndWord(player);
             }
-
-            public boolean hasChineseCharacter(String text) {
-                return text.matches(".*[一-龠].*");
-            }
-
-            public String getReplaceHiragana(String text) {
-                return HiraganaConverter.convertText(text);
-            }
-        }.runTask(plugin);
+            e.setMessage(replacedText);
+            return;
+        }
     }
+
+    private boolean hasChineseCharacter(String text) {
+        return text.matches(".*[一-龠].*");
+    }
+
 }
