@@ -63,6 +63,9 @@ public class PlayerEventHandler implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent e) {
         Player player = e.getEntity();
+
+        // TODO: 老化の場合だけカスタムメッセージを表示するように変更
+
         Component message = LinearComponents.linear(NamedTextColor.WHITE, text(player.getName() + "は老衰で死亡した"));
         e.deathMessage(message);
     }
@@ -113,8 +116,9 @@ public class PlayerEventHandler implements Listener {
                 String message = e.getMessage();
                 // 漢字の入力制限
                 if (plugin.isNotUseChineseCharacter(player) && hasChineseCharacter(message)) {
-                    player.sendMessage("漢字は忘れてしまって発言できない！");
+                    player.sendMessage(ChatColor.RED + "漢字は忘れてしまって発言できない！");
                     e.setCancelled(true);
+                    return;
                 }
                 // 使用できないひらがなを置換する
                 if(plugin.isCheckHiragana(player)){

@@ -4,12 +4,13 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.Map;
 
 public final class HiraganaConverter {
 
     private static HashMap<String,String> convertMap = new HashMap<String, String>();
 
-    public HiraganaConverter(){
+    static {
         try(BufferedReader reader = new BufferedReader(new InputStreamReader(getResource("convertTable.csv"), "UTF-8"))) {
             String line;
             while((line = reader.readLine()) != null) {
@@ -22,12 +23,9 @@ public final class HiraganaConverter {
     };
 
     public static String convertText(String text) {
-        convertMap.forEach((key, value) -> {
-            if(!text.contains(key)) {
-                return;
-            }
-            text.replaceAll(text, value);
-        });
+        for(Map.Entry<String, String> entry : convertMap.entrySet()) {
+            text = text.replaceAll(entry.getKey(), entry.getValue());
+        }
         return text;
     }
 
