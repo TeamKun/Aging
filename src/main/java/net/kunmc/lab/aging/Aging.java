@@ -32,6 +32,7 @@ public final class Aging extends JavaPlugin {
     private BukkitTask task;
     private PlayerEventHandler handler;
     private FileConfiguration config;
+    private Objective objective;
 
     @Override
     public void onEnable() {
@@ -74,24 +75,26 @@ public final class Aging extends JavaPlugin {
         ScoreboardManager manager = Bukkit.getScoreboardManager();
         Scoreboard board = manager.getMainScoreboard();
 
-        Objective objective = board.getObjective("GENERATION");
+        objective = board.getObjective("generation");
         if(null == objective) {
-            objective = board.registerNewObjective("GENERATION", "generation");
+            objective = board.registerNewObjective("generation", "dummy");
             objective.setDisplaySlot(DisplaySlot.BELOW_NAME);
-            objective.setDisplayName("/ 20");
+            objective.setDisplaySlot(DisplaySlot.PLAYER_LIST);
         }
 
         for(Player player : Bukkit.getOnlinePlayers()) {
             initPlayer(player);
             objective.setDisplayName("generation");
-
         }
     }
 
     public void initPlayer(Player player) {
         int age = new Random().nextInt(Generation.Type.ELDERLY.getMaxAge());
         setAge(player, age);
-        setGeneration(player, Generation.getGeneration(age));
+        Generation.Type generation = Generation.getGeneration(age);
+        setGeneration(player, generation);
+
+        objective.setDisplayName(generation + "(" + age + "歳)");
         setIsAging(player, true);
     }
 
