@@ -16,12 +16,15 @@ public final class ConfigConst {
     public final static String USE_CHINESE_CHARACTER = "useKanji";
     public final static String CHECK_HIRAGANA = "checkHiragana";
 
-    // 最高年齢に到達時のダメージ
-    public final static double DAMAGE = 20.0d;
-
     public final static String INIT_AGE = "init_age";
     public final static String REJUVENATE_AGE ="rejuvenate_age";
     public final static String REJUVENATE_ITEMS = "rejuvenate_item";
+
+    // 最高年齢に到達時のダメージ
+    public final static double DAMAGE = 20.0d;
+
+    // 最低年齢
+    public final static int AGE_0 = 0;
 
     private ConfigConst(){}
 }

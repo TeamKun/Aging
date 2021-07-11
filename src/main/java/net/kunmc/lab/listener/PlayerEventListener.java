@@ -18,10 +18,10 @@ import org.bukkit.event.player.*;
 
 import static net.kyori.adventure.text.Component.text;
 
-public class PlayerEventHandler implements Listener {
+public class PlayerEventListener implements Listener {
 
     private Aging plugin;
-    public PlayerEventHandler(Aging plugin) {
+    public PlayerEventListener(Aging plugin) {
         this.plugin = plugin;
     }
     @EventHandler
@@ -64,7 +64,7 @@ public class PlayerEventHandler implements Listener {
 
         // TODO: 老化の場合だけカスタムメッセージを表示するように変更
 
-        Component message = LinearComponents.linear(NamedTextColor.WHITE, text(player.getName() + "は老衰で死亡した"));
+        Component message = LinearComponents.linear(NamedTextColor.WHITE, text(player.getName() + " は老衰で死亡した"));
         e.deathMessage(message);
     }
     @EventHandler

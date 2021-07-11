@@ -4,7 +4,7 @@ import net.kunmc.lab.command.CommandHandler;
 import net.kunmc.lab.constants.CommandConst;
 import net.kunmc.lab.constants.ConfigConst;
 import net.kunmc.lab.constants.Generation;
-import net.kunmc.lab.listener.PlayerEventHandler;
+import net.kunmc.lab.listener.PlayerEventListener;
 import net.kunmc.lab.task.AgingTask;
 import net.kyori.adventure.text.*;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -30,7 +30,7 @@ import static net.kyori.adventure.text.Component.text;
 public final class Aging extends JavaPlugin {
     public static Aging plugin;
     private BukkitTask task;
-    private PlayerEventHandler handler;
+    private PlayerEventListener handler;
     private FileConfiguration config;
     private Objective objective;
 
@@ -55,7 +55,7 @@ public final class Aging extends JavaPlugin {
      */
     public void startGame() {
         initGame();
-        handler = new PlayerEventHandler(this);
+        handler = new PlayerEventListener(this);
         getServer().getPluginManager().registerEvents(handler, this);
 
         int period = config.getInt(ConfigConst.PERIOD);
@@ -210,7 +210,7 @@ public final class Aging extends JavaPlugin {
 
     public int rejuvenateAge(Player player) {
         int rejuvenateAge = config.getInt(ConfigConst.REJUVENATE_AGE);
-        int age = getAge(player) - rejuvenateAge;
+        int age = getAge(player) - rejuvenateAge >= ConfigConst.AGE_0 ? getAge(player) - rejuvenateAge : ConfigConst.AGE_0 ;
         setAge(player, age);
 
         addGeneration(player, Generation.getGeneration(age));
