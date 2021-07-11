@@ -98,7 +98,7 @@ public final class Aging extends JavaPlugin {
     }
 
     public void initPlayer(Player player) {
-        int age = new Random().nextInt(Generation.Type.ELDERLY.getMaxAge());
+        int age = new Random().nextInt(Generation.Type.ELDERLY.max_age);
         setAge(player, age);
         Generation.Type generation = Generation.getGeneration(age);
         setGeneration(player, generation);
@@ -161,9 +161,11 @@ public final class Aging extends JavaPlugin {
         int age = getAge(player) + 1;
         setAge(player, age);
 
-        Component message = LinearComponents.linear(NamedTextColor.WHITE, text(player.getName() + " " + age + "歳 "));
+        Generation.Type generation = getGeneration(player);
+
+        Component message = LinearComponents.linear(generation.color, text(player.getName() + " " + age + "歳 "));
         player.displayName(message);
-        getServer().getLogger().info(player.getName() + " " + age + "歳(" + getGeneration(player) + ")");
+        getServer().getLogger().info(player.getName() + " " + age + "歳(" + generation + ")");
 
         return age;
     }

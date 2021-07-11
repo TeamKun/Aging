@@ -93,11 +93,11 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
             return "1年経過するのに必要なtrik数を" + trik + "に変更しました";
         }
 
-        if( !Generation.Type.BABY.getName().equals(args[1])
-        && !Generation.Type.KIDS.getName().equals(args[1])
-        && !Generation.Type.YOUNG.getName().equals(args[1])
-        && !Generation.Type.ADULT.getName().equals(args[1])
-        && !Generation.Type.ELDERLY.getName().equals(args[1]) ) {
+        if( !Generation.Type.BABY.name.equals(args[1])
+        && !Generation.Type.KIDS.name.equals(args[1])
+        && !Generation.Type.YOUNG.name.equals(args[1])
+        && !Generation.Type.ADULT.name.equals(args[1])
+        && !Generation.Type.ELDERLY.name.equals(args[1]) ) {
             return "世代指定が間違っています";
         }
 
