@@ -1,5 +1,6 @@
 package net.kunmc.lab.aging;
 
+import net.kunmc.lab.AgingScoreBoard;
 import net.kunmc.lab.command.CommandHandler;
 import net.kunmc.lab.constants.CommandConst;
 import net.kunmc.lab.constants.ConfigConst;
@@ -33,6 +34,7 @@ public final class Aging extends JavaPlugin {
     private PlayerEventListener handler;
     private FileConfiguration config;
     private Objective objective;
+    private AgingScoreBoard scoreboard;
 
     @Override
     public void onEnable() {
@@ -69,6 +71,9 @@ public final class Aging extends JavaPlugin {
         task.cancel();
         HandlerList.unregisterAll(handler);
         handler = null;
+
+        scoreboard.remove();
+        scoreboard = null;
     }
 
     public void suspend() {
@@ -81,19 +86,10 @@ public final class Aging extends JavaPlugin {
     }
 
     private void initGame() {
-        ScoreboardManager manager = Bukkit.getScoreboardManager();
-        Scoreboard board = manager.getMainScoreboard();
-
-        objective = board.getObjective("generation");
-        if(null == objective) {
-            objective = board.registerNewObjective("generation", "dummy");
-            objective.setDisplaySlot(DisplaySlot.BELOW_NAME);
-            objective.setDisplaySlot(DisplaySlot.PLAYER_LIST);
-        }
-
+        scoreboard = new AgingScoreBoard();
         for(Player player : Bukkit.getOnlinePlayers()) {
             initPlayer(player);
-            objective.setDisplayName("generation");
+            scoreboard.setShowPlayer(player);
         }
     }
 
@@ -103,7 +99,8 @@ public final class Aging extends JavaPlugin {
         Generation.Type generation = Generation.getGeneration(age);
         setGeneration(player, generation);
 
-        objective.setDisplayName(generation + "(" + age + "歳)");
+        scoreboard.setScore(player.getName(), age);
+
         setIsAging(player, true);
     }
 
@@ -166,6 +163,8 @@ public final class Aging extends JavaPlugin {
         Component message = LinearComponents.linear(generation.color, text(player.getName() + " " + age + "歳 "));
         player.displayName(message);
         getServer().getLogger().info(player.getName() + " " + age + "歳(" + generation + ")");
+
+        scoreboard.setScore(player.getName(), age);
 
         return age;
     }
