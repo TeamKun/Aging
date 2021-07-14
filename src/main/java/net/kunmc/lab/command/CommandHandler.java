@@ -88,9 +88,8 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                 : Stream.of(CommandConst.COMMAND_START, CommandConst.COMMAND_STOP, CommandConst.COMMAND_CONF, CommandConst.COMMAND_SET, CommandConst.COMMAND_UNSET)
             ).filter(e -> e.startsWith(args[0])).collect(Collectors.toList());
         }
-
         if(2 == args.length) {
-            switch(args[1]){
+            switch(args[0]){
                 case CommandConst.COMMAND_CONF:
                     return (sender.hasPermission(CommandConst.MAIN_COMMAND)
                             ? Stream.of(CommandConst.ARGS1_PERIOD, Generation.Type.BABY.name, Generation.Type.KIDS.name, Generation.Type.YOUNG.name, Generation.Type.ADULT.name, Generation.Type.ELDERLY.name)
@@ -110,14 +109,14 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
         }
 
         if(3 == args.length) {
-            if(isGenerationName(args[2])) {
+            if(isGenerationName(args[1])) {
                 return (sender.hasPermission(CommandConst.MAIN_COMMAND)
                         ? Stream.of(CommandConst.ARGS2_WALKSPEED, CommandConst.ARGS2_MAXHP, CommandConst.ARGS2_FOODLEVEL)
                         : Stream.of(CommandConst.ARGS2_WALKSPEED, CommandConst.ARGS2_MAXHP, CommandConst.ARGS2_FOODLEVEL)
                 ).filter(e -> e.startsWith(args[2])).collect(Collectors.toList());
             }
 
-            if(isPlayerName(args[2])) {
+            if(isPlayerName(args[1])) {
                 if(CommandConst.COMMAND_UNSET.equals(args[1])) {
                     return new ArrayList<>();
                 }
