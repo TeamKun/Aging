@@ -1,10 +1,10 @@
 package net.kunmc.lab.command;
 
-import com.sun.org.apache.xerces.internal.parsers.IntegratedParserConfiguration;
 import net.kunmc.lab.aging.Aging;
 import net.kunmc.lab.constants.CommandConst;
 import net.kunmc.lab.constants.ConfigConst;
 import net.kunmc.lab.constants.Generation;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -13,8 +13,12 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class CommandHandler implements CommandExecutor, TabCompleter {
 
@@ -74,7 +78,76 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
-        return null;
+        if(!CommandConst.MAIN_COMMAND.equals(command.getName())) {
+            return new ArrayList<>();
+        }
+
+        if(1 == args.length) {
+            return (sender.hasPermission(CommandConst.MAIN_COMMAND)
+                ? Stream.of(CommandConst.COMMAND_START, CommandConst.COMMAND_STOP, CommandConst.COMMAND_CONF, CommandConst.COMMAND_SET, CommandConst.COMMAND_UNSET)
+                : Stream.of(CommandConst.COMMAND_START, CommandConst.COMMAND_STOP, CommandConst.COMMAND_CONF, CommandConst.COMMAND_SET, CommandConst.COMMAND_UNSET)
+            ).filter(e -> e.startsWith(args[0])).collect(Collectors.toList());
+        }
+
+        if(2 == args.length) {
+            switch(args[1]){
+                case CommandConst.COMMAND_CONF:
+                    return (sender.hasPermission(CommandConst.MAIN_COMMAND)
+                            ? Stream.of(CommandConst.ARGS1_PERIOD, Generation.Type.BABY.name, Generation.Type.KIDS.name, Generation.Type.YOUNG.name, Generation.Type.ADULT.name, Generation.Type.ELDERLY.name)
+                            : Stream.of(CommandConst.ARGS1_PERIOD, Generation.Type.BABY.name, Generation.Type.KIDS.name, Generation.Type.YOUNG.name, Generation.Type.ADULT.name, Generation.Type.ELDERLY.name)
+                    ).filter(e -> e.startsWith(args[1])).collect(Collectors.toList());
+
+                case CommandConst.COMMAND_SET:
+
+                case CommandConst.COMMAND_UNSET:
+                    return (sender.hasPermission(CommandConst.MAIN_COMMAND)
+                            ? getPlayerName()
+                            : getPlayerName()
+                    ).filter(e -> e.startsWith(args[1])).collect(Collectors.toList());
+                default:
+                    return new ArrayList<>();
+            }
+        }
+
+        if(3 == args.length) {
+            if(isGenerationName(args[2])) {
+                return (sender.hasPermission(CommandConst.MAIN_COMMAND)
+                        ? Stream.of(CommandConst.ARGS2_WALKSPEED, CommandConst.ARGS2_MAXHP, CommandConst.ARGS2_FOODLEVEL)
+                        : Stream.of(CommandConst.ARGS2_WALKSPEED, CommandConst.ARGS2_MAXHP, CommandConst.ARGS2_FOODLEVEL)
+                ).filter(e -> e.startsWith(args[2])).collect(Collectors.toList());
+            }
+
+            if(isPlayerName(args[2])) {
+                if(CommandConst.COMMAND_UNSET.equals(args[1])) {
+                    return new ArrayList<>();
+                }
+
+                return (sender.hasPermission(CommandConst.MAIN_COMMAND)
+                        ? Stream.of(Generation.Type.BABY.name, Generation.Type.KIDS.name, Generation.Type.YOUNG.name, Generation.Type.ADULT.name, Generation.Type.ELDERLY.name)
+                        : Stream.of(Generation.Type.BABY.name, Generation.Type.KIDS.name, Generation.Type.YOUNG.name, Generation.Type.ADULT.name, Generation.Type.ELDERLY.name)
+                ).filter(e -> e.startsWith(args[2])).collect(Collectors.toList());
+            }
+        }
+
+        return new ArrayList<>();
+    }
+
+    private Stream<String> getPlayerName() {
+        Collection<Player> list = (Collection<Player>) Bukkit.getOnlinePlayers();
+        ArrayList<String> names = new ArrayList<>();
+
+        for(Player player : list) {
+            names.add(player.getName());
+        }
+        return names.stream();
+    }
+
+    private boolean isGenerationName(String args){
+        return Arrays.stream(Generation.Type.values()).anyMatch(e->e.name.equals(args));
+    }
+
+    private boolean isPlayerName(String args) {
+        return getPlayerName().anyMatch(e -> e.equals(args));
     }
 
     public String onConf(String[] args) {
