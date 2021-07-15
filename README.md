@@ -3,7 +3,6 @@
 
 ## 動作環境
 - Minecraft 1.16.5
-- PaperMC 1.16.5
 
 ## コマンド一覧
 - aging
@@ -12,14 +11,14 @@
     - stop
         プラグイン無効化
     - conf
-        - period < trik >
+        - period <trik>
           1年経過するのに必要なtrik数 [default: 20]
-        - < baby | kids | young | adult | elderly >
-            - walkspeed < count > 歩行速度(-1.0~1.0の範囲で指定する)
-            - maxhp < count > HPの最大値を指定する
-            - foodlevel < count > 空腹値の最大値を指定する
-    - set < username > <baby | kids | young | adult | elderly>
+        - init_age <age>
+          リスポーン時の年齢 [default: 0]
+        - rejuvenate_age <age>
+          若返りアイテムを食べて若返る年齢 [default: 10]
+    - set <baby|kids|young|adult|elderly> <playerName>
       指定したユーザーの世代を固定します。世代固定したユーザーは年数が経過しても歳を取りません。
-    - unset < username >
+    - unset <playerName>
       ユーザーの世代固定を解除します。
     

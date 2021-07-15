@@ -8,7 +8,6 @@ import net.kunmc.lab.constants.Generation;
 import net.kunmc.lab.listener.PlayerEventListener;
 import net.kunmc.lab.task.AgingTask;
 import net.kyori.adventure.text.*;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -23,7 +22,6 @@ import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
-
 import java.util.*;
 import java.util.logging.Level;
 import static net.kyori.adventure.text.Component.text;
@@ -207,13 +205,13 @@ public final class Aging extends JavaPlugin {
         addGeneration(player, Generation.Type.BABY);
     }
 
-    public int rejuvenateAge(Player player) {
+    public String  rejuvenateAge(Player player) {
         int rejuvenateAge = config.getInt(ConfigConst.REJUVENATE_AGE);
         int age = getAge(player) - rejuvenateAge >= ConfigConst.AGE_0 ? getAge(player) - rejuvenateAge : ConfigConst.AGE_0 ;
         setAge(player, age);
-
         addGeneration(player, Generation.getGeneration(age));
-        return age;
+
+        return "若返りアイテムを食べたので " + rejuvenateAge + "歳若返った！[現在の年齢: "+ age + "歳]";
     }
 
     public List<Material> getRejuvenateItems() {
@@ -307,9 +305,5 @@ public final class Aging extends JavaPlugin {
     public void setConfig(String key, Object value) {
         config.set(key, value);
         saveConfig();
-    }
-    public void setConfig(String key, String value){
-        // TODO: 設定値に応じたvalueの変換処理
-        this.setConfig(key, (String)value);
     }
 }

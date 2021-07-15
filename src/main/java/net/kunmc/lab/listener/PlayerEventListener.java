@@ -81,9 +81,8 @@ public class PlayerEventListener implements Listener {
         // 若返りアイテム
         for(Material rejuvenateItem : plugin.getRejuvenateItems()) {
             if(rejuvenateItem.equals(material)) {
-                int age = plugin.rejuvenateAge(player);
-                // TODO: マイナスにならないよう修正
-                player.sendMessage("昆布を食べたので10歳若返った！[現在の年齢:" + age + "歳]");
+                String message = plugin.rejuvenateAge(player);
+                player.sendMessage(message);
                 return;
             }
         }
