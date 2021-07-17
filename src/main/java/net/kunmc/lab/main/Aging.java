@@ -1,7 +1,7 @@
-package net.kunmc.lab.aging;
+package net.kunmc.lab.main;
 
 import net.kunmc.lab.AgingScoreBoard;
-import net.kunmc.lab.command.CommandHandler;
+import net.kunmc.lab.command.AgingCommandExecutor;
 import net.kunmc.lab.constants.CommandConst;
 import net.kunmc.lab.constants.ConfigConst;
 import net.kunmc.lab.constants.Generation;
@@ -32,7 +32,7 @@ public final class Aging extends JavaPlugin {
     public void onEnable() {
         plugin = this;
 
-        CommandHandler commandHandler = new CommandHandler(this);
+        AgingCommandExecutor commandHandler = new AgingCommandExecutor(this);
         getCommand(CommandConst.MAIN_COMMAND).setExecutor(commandHandler);
     }
 

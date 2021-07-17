@@ -1,6 +1,6 @@
 package net.kunmc.lab.command;
 
-import net.kunmc.lab.aging.Aging;
+import net.kunmc.lab.main.Aging;
 import net.kunmc.lab.constants.CommandConst;
 import net.kunmc.lab.constants.ConfigConst;
 import net.kunmc.lab.constants.Generation;
@@ -17,10 +17,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class CommandHandler implements CommandExecutor, TabCompleter {
+public class AgingCommandExecutor implements CommandExecutor, TabCompleter {
 
     private Aging plugin;
-    public CommandHandler(Aging plugin) {
+    public AgingCommandExecutor(Aging plugin) {
         this.plugin = plugin;
     }
 

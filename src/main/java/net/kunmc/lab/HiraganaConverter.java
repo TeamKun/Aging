@@ -1,4 +1,4 @@
-package net.kunmc.lab.constants;
+package net.kunmc.lab;
 
 import java.io.BufferedReader;
 import java.io.InputStream;

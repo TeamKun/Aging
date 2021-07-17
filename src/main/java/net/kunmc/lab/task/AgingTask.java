@@ -1,8 +1,7 @@
 package net.kunmc.lab.task;
 
-import net.kunmc.lab.aging.Aging;
+import net.kunmc.lab.main.Aging;
 import org.bukkit.scheduler.BukkitRunnable;
-
 import java.util.logging.Level;
 
 public class AgingTask extends BukkitRunnable {

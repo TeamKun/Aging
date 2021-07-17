@@ -30,14 +30,9 @@ public class Generation {
             return this.name + "." ;
         }
 
-        public boolean hasNext() {
-            return this.nextGeneration == null ? false : true;
-        }
-
         public String getMessage() {
-            return "あなたは " + this.dispName + " になりました。";
+            return "あなたは " + this.dispName + " になりました";
         }
-
     }
 
     /**

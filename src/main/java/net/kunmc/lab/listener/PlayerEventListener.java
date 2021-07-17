@@ -1,9 +1,9 @@
 package net.kunmc.lab.listener;
 
-import net.kunmc.lab.aging.Aging;
+import net.kunmc.lab.HiraganaConverter;
+import net.kunmc.lab.main.Aging;
 import net.kunmc.lab.constants.ConfigConst;
 import net.kunmc.lab.constants.Generation;
-import net.kunmc.lab.constants.HiraganaConverter;
 import net.kyori.adventure.text.*;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
@@ -59,16 +59,6 @@ public class PlayerEventListener implements Listener {
             player.setLastDamageCause(new EntityDamageEvent(player, EntityDamageEvent.DamageCause.CUSTOM, ConfigConst.DAMAGE));
         }
         fallDistanceMap.remove(uuid);
-    }
-
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent e) {
-        Player p = e.getPlayer();
-
-    }
-    @EventHandler
-    public void onPlayerInteract(PlayerInteractEvent e) {
-        Player p = e.getPlayer();
     }
 
     @EventHandler
