@@ -29,11 +29,13 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
         if(!(sender instanceof Player)) {
             return true;
         }
-
         if(!CommandConst.MAIN_COMMAND.equals(command.getName())) {
             return true;
         }
-
+        if(args.length < 1) {
+            sender.sendMessage(ChatColor.RED + "usage: \n/aging <" + CommandConst.COMMAND_START + " | " + CommandConst.COMMAND_STOP + ">");
+            return true;
+        }
         if(null == this.plugin) {
             return true;
         }
@@ -46,7 +48,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                     return true;
                 }
                 this.plugin.startGame();
-                sender.sendMessage(ChatColor.GREEN + "info: 老化プラグイン が有効化されました");
+                sender.sendMessage(ChatColor.GREEN + "info: 老化プラグイン が起動しました");
                 break;
             case CommandConst.COMMAND_STOP:
                 if(!(args.length == 1)) {
@@ -54,7 +56,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
                     return true;
                 }
                 this.plugin.stopGame();
-                sender.sendMessage(ChatColor.GREEN + "info: 老化プラグイン が無効化されました");
+                sender.sendMessage(ChatColor.GREEN + "info: 老化プラグイン が停止しました");
                 break;
             case CommandConst.COMMAND_SUSPEND:
                 if(!(args.length == 1)) {
@@ -131,8 +133,8 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
             switch(args[0]){
                 case CommandConst.COMMAND_CONF:
                     return (sender.hasPermission(CommandConst.MAIN_COMMAND)
-                            ? Stream.of(CommandConst.ARGS1_PERIOD, CommandConst.ARGS1_INIT_AGE, CommandConst.ARGS1_REJUVENATE_AGE)
-                            : Stream.of(CommandConst.ARGS1_PERIOD, CommandConst.ARGS1_INIT_AGE, CommandConst.ARGS1_REJUVENATE_AGE)
+                            ? Stream.of(ConfigConst.PERIOD, ConfigConst.INIT_AGE, ConfigConst.REJUVENATE_AGE)
+                            : Stream.of(ConfigConst.PERIOD, ConfigConst.INIT_AGE, ConfigConst.REJUVENATE_AGE)
                     ).filter(e -> e.startsWith(args[1])).collect(Collectors.toList());
 
                 case CommandConst.COMMAND_SET:
@@ -152,16 +154,6 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
         }
 
         if(3 == args.length) {
-            if(CommandConst.COMMAND_CONF.equals(args[0])) {
-                if(!isGenerationName(args[1])) {
-                    return new ArrayList<>();
-                }
-                return (sender.hasPermission(CommandConst.MAIN_COMMAND)
-                        ? Stream.of(CommandConst.ARGS2_WALKSPEED, CommandConst.ARGS2_MAXHP, CommandConst.ARGS2_FOODLEVEL, CommandConst.ARGS2_USEKANJI, CommandConst.ARGS2_CHECKHIRAGANA, CommandConst.ARGS2_CANEAT)
-                        : Stream.of(CommandConst.ARGS2_WALKSPEED, CommandConst.ARGS2_MAXHP, CommandConst.ARGS2_FOODLEVEL, CommandConst.ARGS2_USEKANJI, CommandConst.ARGS2_CHECKHIRAGANA, CommandConst.ARGS2_CANEAT)
-                ).filter(e -> e.startsWith(args[2])).collect(Collectors.toList());
-            }
-
             if(CommandConst.COMMAND_SET.equals(args[0])) {
                 if(!isGenerationName(args[1])) {
                     return new ArrayList<>();
@@ -235,7 +227,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
      */
     private String checkConfArgs(String[] args) throws NumberFormatException {
         // コマンドが間違っている
-        if( !(CommandConst.ARGS1_PERIOD.equals(args[1])||CommandConst.ARGS1_INIT_AGE.equals(args[1])||CommandConst.ARGS1_REJUVENATE_AGE.equals(args[1]) || CommandConst.ARGS1_REJUVENATE_ITEM.equals(args[1])) ) {
+        if( !(ConfigConst.PERIOD.equals(args[1])||ConfigConst.INIT_AGE.equals(args[1])||ConfigConst.REJUVENATE_AGE.equals(args[1])) ) {
             return "コマンドが間違っています";
         }
 
@@ -243,22 +235,22 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
         if(!(3 == args.length)) {
             return "引数の数が正しくありません";
         }
-        if(CommandConst.ARGS1_PERIOD.equals(args[1])) {
+        if(ConfigConst.PERIOD.equals(args[1])) {
             int trik = Integer.parseInt(args[2]);
-            if(trik < CommandConst.MIN_WALKSPEED || CommandConst.MAX_WALKSPEED < trik) {
-                return "trikは" + CommandConst.MIN_WALKSPEED + "〜" + CommandConst.MAX_WALKSPEED + "の間で設定してください";
+            if(trik < CommandConst.MIN_INIT_PERIOD || CommandConst.MAX_INIT_PERIOD < trik) {
+                return "trikは" + CommandConst.MIN_INIT_PERIOD + "〜" + CommandConst.MAX_INIT_PERIOD + "の間で設定してください";
             }
         }
-        if(CommandConst.ARGS1_INIT_AGE.equals(args[1])) {
+        if(ConfigConst.INIT_AGE.equals(args[1])) {
             int initAge = Integer.parseInt(args[2]);
             if(initAge < CommandConst.MIN_INIT_AGE || CommandConst.MAX_INIT_AGE < initAge) {
                 return "init_ageは" + CommandConst.MIN_INIT_AGE + "〜" + CommandConst.MAX_INIT_AGE + "の間で設定してください";
             }
         }
-        if(CommandConst.ARGS1_REJUVENATE_AGE.equals(args[1])) {
+        if(ConfigConst.REJUVENATE_AGE.equals(args[1])) {
             int initAge = Integer.parseInt(args[2]);
-            if(initAge < CommandConst.MIN_INIT_AGE || CommandConst.MAX_INIT_AGE < initAge) {
-                return "rejuvenate_ageは" + CommandConst.MIN_INIT_AGE + "〜" + CommandConst.MAX_INIT_AGE + "の間で設定してください";
+            if(initAge < CommandConst.MIN_REJUVENATE_AGE || CommandConst.MAX_REJUVENATE_AGE < initAge) {
+                return "rejuvenate_ageは" + CommandConst.MIN_REJUVENATE_AGE + "〜" + CommandConst.MAX_REJUVENATE_AGE + "の間で設定してください";
             }
         }
         return "";
@@ -272,19 +264,19 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
      * @throws NumberFormatException
      */
     private String setConf(String[] args) throws NumberFormatException {
-        if(CommandConst.ARGS1_PERIOD.equals(args[1])) {
+        if(ConfigConst.PERIOD.equals(args[1])) {
             int trik = Integer.parseInt(args[2]);
             plugin.setConfig(ConfigConst.PERIOD, trik);
             return "1年経過するのに必要なtrik数を " + trik + " に変更しました";
         }
 
-        if(CommandConst.ARGS1_INIT_AGE.equals(args[1])) {
+        if(ConfigConst.INIT_AGE.equals(args[1])) {
             int init_age = Integer.parseInt(args[2]);
             plugin.setConfig(ConfigConst.INIT_AGE, init_age);
             return "リスポーン時の初期年齢を " + init_age + " に変更しました";
         }
 
-        if(CommandConst.ARGS1_REJUVENATE_AGE.equals(args[1])) {
+        if(ConfigConst.REJUVENATE_AGE.equals(args[1])) {
             int rejuvenate_age = Integer.parseInt(args[2]);
             plugin.setConfig(ConfigConst.REJUVENATE_AGE, rejuvenate_age);
             return "若返る年齢を " + rejuvenate_age + " に変更しました";
@@ -300,12 +292,10 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
     private String setPlayerGeneration(String[] args) {
         Generation.Type generation = Generation.Type.valueOf(args[1].toUpperCase(Locale.ROOT));
         Player player = Bukkit.getPlayer(args[2]);
-        plugin.setAge(player, generation.min_age);
-        plugin.setGeneration(player, generation);
-        plugin.setIsAging(player, false);
 
-        //  TODO: scoreboardの処理
-        return args[1] + " の世代を " + generation.dispName + " に固定しました";
+        plugin.setPlayerAge(player, generation.min_age);
+        plugin.setIsAging(player, false);
+        return args[2] + " を " + generation.dispName + " に世代固定しました";
     }
 
     /**

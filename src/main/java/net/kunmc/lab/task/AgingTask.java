@@ -15,7 +15,7 @@ public class AgingTask extends BukkitRunnable {
     @Override
     public void run() {
         try {
-            plugin.aging();
+            plugin.run();
         }catch(IllegalStateException ise) {
             plugin.getLogger().log(Level.WARNING, "このスレッドはすでにスケジュール済です");
         }catch(Exception e) {

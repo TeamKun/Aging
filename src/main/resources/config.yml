@@ -1,5 +1,5 @@
 # 老化クラフト全体で関わる設定値
-period: 20
+period: 100
 init_age: 0
 rejuvenate_age: 10
 rejuvenate_item:

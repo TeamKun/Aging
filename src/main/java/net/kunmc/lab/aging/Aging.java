@@ -11,17 +11,12 @@ import net.kyori.adventure.text.*;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.ScoreboardManager;
 import java.util.*;
 import java.util.logging.Level;
 import static net.kyori.adventure.text.Component.text;
@@ -29,9 +24,7 @@ import static net.kyori.adventure.text.Component.text;
 public final class Aging extends JavaPlugin {
     public static Aging plugin;
     private BukkitTask task;
-    private PlayerEventListener handler;
-    private FileConfiguration config;
-    private Objective objective;
+    private PlayerEventListener listener;
     private AgingScoreBoard scoreboard;
 
     @Override
@@ -40,49 +33,59 @@ public final class Aging extends JavaPlugin {
 
         CommandHandler commandHandler = new CommandHandler(this);
         getCommand(CommandConst.MAIN_COMMAND).setExecutor(commandHandler);
-        //getCommand(CommandConstants.MAIN_COMMAND).setTabCompleter(commandHandler);
-        config = getConfig();
     }
 
     @Override
     public void onDisable() {
         plugin = null;
-        config = null;
     }
 
     /**
-     * 老化クラフトの開始処理
+     * 老化プラグインの開始処理
      */
-    public void startGame() {
+    public boolean startGame() {
         initGame();
-        handler = new PlayerEventListener(this);
-        getServer().getPluginManager().registerEvents(handler, this);
+        listener = new PlayerEventListener(this);
+        getServer().getPluginManager().registerEvents(listener, this);
 
-        int period = config.getInt(ConfigConst.PERIOD);
+        int period = getConfig().getInt(ConfigConst.PERIOD);
         task = new AgingTask(this).runTaskTimer(this, period, period);
+        return true;
     }
 
     /**
-     * 老化クラフトの終了処理
+     * 老化プラグインの終了処理
      */
-    public void stopGame() {
+    public boolean stopGame() {
         task.cancel();
-        HandlerList.unregisterAll(handler);
-        handler = null;
+        HandlerList.unregisterAll(listener);
+        listener = null;
 
         scoreboard.remove();
         scoreboard = null;
+        return true;
     }
 
-    public void suspend() {
+    /**
+     * 老化プラグインの中断処理
+     */
+    public boolean suspend() {
         task.cancel();
+        return true;
     }
 
-    public void restart() {
-        int period = config.getInt(ConfigConst.PERIOD);
+    /**
+     * 老化プラグインの再開処理
+     */
+    public boolean restart() {
+        int period = getConfig().getInt(ConfigConst.PERIOD);
         task = new AgingTask(this).runTaskTimer(this, period, period);
+        return true;
     }
 
+    /**
+     * 老化プラグイン初期化処理
+     */
     private void initGame() {
         scoreboard = new AgingScoreBoard();
         for(Player player : Bukkit.getOnlinePlayers()) {
@@ -91,21 +94,23 @@ public final class Aging extends JavaPlugin {
         }
     }
 
+    /**
+     * プレイヤー初期化処理
+     * @param player
+     */
     public void initPlayer(Player player) {
         int age = new Random().nextInt(Generation.Type.ELDERLY.max_age);
         setAge(player, age);
-        Generation.Type generation = Generation.getGeneration(age);
-        setGeneration(player, generation);
+        setGeneration(player, Generation.getGeneration(age));
+        setIsAging(player, true);
 
         scoreboard.setScore(player.getName(), age);
-
-        setIsAging(player, true);
     }
 
     /**
-     * ログインユーザーの老化処理を行う
+     * オンラインの全プレイヤー老化処理
      */
-    public void aging() {
+    public void run() {
         Collection allPlayer = Bukkit.getOnlinePlayers();
         if(1 > allPlayer.size()) {
             return;
@@ -127,44 +132,49 @@ public final class Aging extends JavaPlugin {
                 return;
             }
 
-            int age = addAge(player);
-
-            Generation.Type nowGeneration = getGeneration(player);
-            Generation.Type nextGeneration = Generation.getGeneration(age);
-
-            // 世代更新がない場合は次ユーザーへ
-            if(nowGeneration.equals(nextGeneration) ) {
-                return;
-            }
-
-            // 世代更新先がない場合は老衰とする
-            if(false == nowGeneration.hasNext()) {
-                player.damage(ConfigConst.DAMAGE);
-                return;
-            }
-
-            addGeneration(player, nowGeneration.nextGeneration);
+            aging(player);
         });
     }
 
     /**
-     * 年齢加算を行う
-     * @param player 年齢加算するプレイヤー
-     * @return 加算後の年齢
+     * プレイヤーの老化処理を行う
+     * @param player 老化するプレイヤー
+     * @return
      */
-    public int addAge(Player player) {
+    public void aging(Player player) {
         int age = getAge(player) + 1;
-        setAge(player, age);
 
+        if(age > Generation.Type.ELDERLY.max_age) {
+            player.damage(ConfigConst.DAMAGE);
+            return;
+        }
+        setPlayerAge(player, age);
+
+        // 各種表示
         Generation.Type generation = getGeneration(player);
-
         Component message = LinearComponents.linear(generation.color, text(player.getName() + " " + age + "歳 "));
         player.displayName(message);
         getServer().getLogger().info(player.getName() + " " + age + "歳(" + generation + ")");
 
+    }
+
+    /**
+     * プレイヤーの年齢と世代を設定する
+     * @param player
+     * @param age
+     */
+    public void setPlayerAge(Player player, int age) {
+        Generation.Type generation = Generation.getGeneration(getAge(player));
+
+        setAge(player, age);
         scoreboard.setScore(player.getName(), age);
 
-        return age;
+        // 世代更新がある場合
+        Generation.Type nextGeneration = Generation.getGeneration(age);
+        if(generation.equals(nextGeneration) ) {
+            return;
+        }
+        setPlayerGeneration(player, nextGeneration);
     }
 
     /**
@@ -172,24 +182,23 @@ public final class Aging extends JavaPlugin {
      * @param player 世代更新するプレイヤー
      * @param generation 更新先の世代
      */
-    public void addGeneration(Player player, Generation.Type generation) {
+    public void setPlayerGeneration(Player player, Generation.Type generation) {
         try {
             // 世代更新メッセージ
             player.sendMessage(generation.getMessage());
+            setGeneration(player, generation);
 
             // 歩行速度
-            float walkSpeed = (float) config.getDouble(generation.getPathName() + ConfigConst.WALK_SPEED);
+            float walkSpeed = (float) getConfig().getDouble(generation.getPathName() + ConfigConst.WALK_SPEED);
             player.setWalkSpeed(walkSpeed);
 
             // HP
-            double maxHp = config.getDouble(generation.getPathName() + ConfigConst.MAX_HP);
+            double maxHp = getConfig().getDouble(generation.getPathName() + ConfigConst.MAX_HP);
             player.setMaxHealth(maxHp);
 
             // 空腹
-            int foodLevel = config.getInt(generation.getPathName() + ConfigConst.FOOD_LEVEL);
+            int foodLevel = getConfig().getInt(generation.getPathName() + ConfigConst.FOOD_LEVEL);
             player.setFoodLevel(foodLevel);
-
-            setGeneration(player, generation);
 
         } catch(IllegalArgumentException ie) {
             getServer().getLogger().log(Level.WARNING, player + " :歩行速度の引数が範囲外の数値です[(float)-1~1]");
@@ -199,25 +208,22 @@ public final class Aging extends JavaPlugin {
     }
 
     public void resetAge(Player player) {
-        int init_age = config.getInt(ConfigConst.INIT_AGE);
-
-        setAge(player, init_age);
-        addGeneration(player, Generation.Type.BABY);
+        int init_age = getConfig().getInt(ConfigConst.INIT_AGE);
+        setPlayerAge(player, init_age);
     }
 
-    public String  rejuvenateAge(Player player) {
-        int rejuvenateAge = config.getInt(ConfigConst.REJUVENATE_AGE);
+    public String rejuvenateAge(Player player) {
+        int rejuvenateAge = getConfig().getInt(ConfigConst.REJUVENATE_AGE);
         int age = getAge(player) - rejuvenateAge >= ConfigConst.AGE_0 ? getAge(player) - rejuvenateAge : ConfigConst.AGE_0 ;
-        setAge(player, age);
-        addGeneration(player, Generation.getGeneration(age));
+        setPlayerAge(player, age);
 
-        return "若返りアイテムを食べたので " + rejuvenateAge + "歳若返った！[現在の年齢: "+ age + "歳]";
+        return "昆布を食べたので " + rejuvenateAge + "歳若返った！[現在の年齢: "+ age + "歳]";
     }
 
     public List<Material> getRejuvenateItems() {
         ArrayList<Material> list = new ArrayList<Material>();
 
-        config.getStringList(ConfigConst.REJUVENATE_ITEMS).forEach(name -> {
+        getConfig().getStringList(ConfigConst.REJUVENATE_ITEMS).forEach(name -> {
             list.add(Material.getMaterial(name));
         });
 
@@ -225,22 +231,42 @@ public final class Aging extends JavaPlugin {
     }
 
     public boolean hasEndWord(Player player){
-        return config.contains(getGeneration(player).getPathName() + ConfigConst.ENDWORD);
+        return getConfig().contains(getGeneration(player).getPathName() + ConfigConst.ENDWORD);
     }
 
     public String getEndWord(Player player) {
         if(hasEndWord(player)) {
-            return config.getString(getGeneration(player).getPathName() + ConfigConst.ENDWORD);
+            return getConfig().getString(getGeneration(player).getPathName() + ConfigConst.ENDWORD);
         }
         return "";
     }
 
     public boolean isNotUseChineseCharacter(Player player) {
-        return !config.getBoolean(getGeneration(player).getPathName() + ConfigConst.USE_CHINESE_CHARACTER);
+        return !getConfig().getBoolean(getGeneration(player).getPathName() + ConfigConst.USE_CHINESE_CHARACTER);
     }
 
     public boolean isCheckHiragana(Player player) {
-        return config.getBoolean(getGeneration(player).getPathName() + ConfigConst.CHECK_HIRAGANA);
+        return getConfig().getBoolean(getGeneration(player).getPathName() + ConfigConst.CHECK_HIRAGANA);
+    }
+
+    public List<Material> canEatItems(Player player) {
+        Generation.Type generation = getGeneration(player);
+        ArrayList<Material> list = new ArrayList<Material>();
+
+        getConfig().getStringList(generation.getPathName() + ConfigConst.CANEAT).forEach(name -> {
+            Material material = Material.getMaterial(name);
+            if(null == material) {
+                return;
+            }
+            list.add(material);
+        });
+
+        return list;
+    }
+
+    public boolean isEatAllItem(Player player) {
+        Generation.Type generation = getGeneration(player);
+        return getConfig().getStringList(generation.getPathName() + ConfigConst.CANEAT).isEmpty();
     }
 
     private void setMetaData(Player player, String key, Object value) {
@@ -256,26 +282,6 @@ public final class Aging extends JavaPlugin {
             }
         }
         return null;
-    }
-
-    public List<Material> canEatItems(Player player) {
-        Generation.Type generation = getGeneration(player);
-        ArrayList<Material> list = new ArrayList<Material>();
-
-        config.getStringList(generation.getPathName() + ConfigConst.CANEAT).forEach(name -> {
-            Material material = Material.getMaterial(name);
-            if(null == material) {
-                return;
-            }
-            list.add(material);
-        });
-
-        return list;
-    }
-
-    public boolean isEatAllItem(Player player) {
-        Generation.Type generation = getGeneration(player);
-        return config.getStringList(generation.getPathName() + ConfigConst.CANEAT).isEmpty();
     }
 
     public int getAge(Player player) {
@@ -303,7 +309,7 @@ public final class Aging extends JavaPlugin {
     }
 
     public void setConfig(String key, Object value) {
-        config.set(key, value);
+        getConfig().set(key, value);
         saveConfig();
     }
 }
