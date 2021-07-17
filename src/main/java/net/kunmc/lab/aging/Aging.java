@@ -13,6 +13,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -143,12 +144,12 @@ public final class Aging extends JavaPlugin {
      */
     public void aging(Player player) {
         int age = getAge(player) + 1;
-
-        if(age > Generation.Type.ELDERLY.max_age) {
+        setPlayerAge(player, age);
+        if(Generation.Type.ELDERLY.max_age < age) {
             player.damage(ConfigConst.DAMAGE);
+            player.setLastDamageCause(new EntityDamageEvent(player, EntityDamageEvent.DamageCause.CUSTOM, ConfigConst.DAMAGE));
             return;
         }
-        setPlayerAge(player, age);
 
         // 各種表示
         Generation.Type generation = getGeneration(player);

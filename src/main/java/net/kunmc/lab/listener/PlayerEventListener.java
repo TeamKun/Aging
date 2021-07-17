@@ -11,6 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
 import java.util.HashMap;
@@ -55,6 +56,7 @@ public class PlayerEventListener implements Listener {
         // 上下移動の累積が一定数以上は1マスより高いところから落下したと判定
         if(4.0 < fallDistanceMap.get(uuid)) {
             player.damage(ConfigConst.DAMAGE);
+            player.setLastDamageCause(new EntityDamageEvent(player, EntityDamageEvent.DamageCause.CUSTOM, ConfigConst.DAMAGE));
         }
         fallDistanceMap.remove(uuid);
     }
@@ -72,12 +74,23 @@ public class PlayerEventListener implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent e) {
         Player player = e.getEntity();
+        if(EntityDamageEvent.DamageCause.CUSTOM.equals(e.getEntity().getLastDamageCause())) {
+            return;
+        }
 
-        // TODO: 老化の場合だけカスタムメッセージを表示するように変更
+        // 老衰
+        if(Generation.Type.ELDERLY.max_age < plugin.getAge(player)) {
+            Component message = LinearComponents.linear(NamedTextColor.WHITE, text(player.getName() + " は老衰で死んでしまった"));
+            e.deathMessage(message);
+            return;
+        }
 
-        Component message = LinearComponents.linear(NamedTextColor.WHITE, text(player.getName() + " は老衰で死亡した"));
+        // 骨折
+        Component message = LinearComponents.linear(NamedTextColor.WHITE, text(player.getName() + " は骨が折れて死んでしまった"));
         e.deathMessage(message);
+        return;
     }
+
     @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent e) {
         Player player = e.getPlayer();
