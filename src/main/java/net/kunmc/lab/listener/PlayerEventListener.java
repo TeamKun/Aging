@@ -6,46 +6,57 @@ import net.kunmc.lab.constants.Generation;
 import net.kunmc.lab.constants.HiraganaConverter;
 import net.kyori.adventure.text.*;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
-
+import java.util.HashMap;
+import java.util.UUID;
 import static net.kyori.adventure.text.Component.text;
 
 public class PlayerEventListener implements Listener {
 
     private Aging plugin;
+    private HashMap<UUID, Float> fallDistanceMap;
+
     public PlayerEventListener(Aging plugin) {
         this.plugin = plugin;
+        fallDistanceMap = new HashMap<UUID, Float>();
     }
+
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent e){
-        Player p = e.getPlayer();
-        if(false == Generation.Type.ELDERLY.equals(plugin.getGeneration(p))){
-            return;
-        }
-        if(false == p.isOnline()) {
-            return;
-        }
-        if( !(e.getFrom().getY() - e.getTo().getY() > 1) ) {
+        Player player = e.getPlayer();
+        if(false == Generation.Type.ELDERLY.equals(plugin.getGeneration(player))) {
             return;
         }
 
-        // 2ブロック以上の段差から落ちたら死亡
-        EntityDamageEvent ede = new EntityDamageEvent(p, EntityDamageEvent.DamageCause.FALL, ConfigConst.DAMAGE);
-        Bukkit.getPluginManager().callEvent(ede);
-        if(ede.isCancelled()) {
+        UUID uuid = player.getUniqueId();
+        float distance = player.getFallDistance();
+
+        if(distance > 0) {
+            if(false == fallDistanceMap.containsKey(uuid)) {
+                fallDistanceMap.put(uuid, new Float(distance));
+                return;
+            }
+
+            Float sumDistance = new Float(distance) + fallDistanceMap.get(uuid);
+            fallDistanceMap.put(uuid, sumDistance);
             return;
         }
 
-        ede.getEntity().setLastDamageCause(ede);
-        p.damage(ConfigConst.DAMAGE);
+        if(false == fallDistanceMap.containsKey(uuid)) {
+            return;
+        }
+
+        // 上下移動の累積が一定数以上は1マスより高いところから落下したと判定
+        if(4.0 < fallDistanceMap.get(uuid)) {
+            player.damage(ConfigConst.DAMAGE);
+        }
+        fallDistanceMap.remove(uuid);
     }
 
     @EventHandler
