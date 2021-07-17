@@ -79,7 +79,7 @@ public class PlayerEventListener implements Listener {
         }
 
         // 老衰
-        if(Generation.Type.ELDERLY.max_age < plugin.getAge(player)) {
+        if(Generation.Type.ELDERLY.max_age <= plugin.getAge(player)) {
             Component message = LinearComponents.linear(NamedTextColor.WHITE, text(player.getName() + " は老衰で死んでしまった"));
             e.deathMessage(message);
             return;

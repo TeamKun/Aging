@@ -144,12 +144,12 @@ public final class Aging extends JavaPlugin {
      */
     public void aging(Player player) {
         int age = getAge(player) + 1;
-        setPlayerAge(player, age);
         if(Generation.Type.ELDERLY.max_age < age) {
             player.damage(ConfigConst.DAMAGE);
             player.setLastDamageCause(new EntityDamageEvent(player, EntityDamageEvent.DamageCause.CUSTOM, ConfigConst.DAMAGE));
             return;
         }
+        setPlayerAge(player, age);
 
         // 各種表示
         Generation.Type generation = getGeneration(player);
@@ -209,7 +209,7 @@ public final class Aging extends JavaPlugin {
     }
 
     public void resetAge(Player player) {
-        int init_age = getConfig().getInt(ConfigConst.INIT_AGE);
+        int init_age = getIsAging(player) ? getConfig().getInt(ConfigConst.INIT_AGE) : getAge(player);
         setPlayerAge(player, init_age);
     }
 
