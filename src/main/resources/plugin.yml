@@ -7,4 +7,6 @@ description: 老化クラフト
 commands:
   aging:
     description: Aging Main Command
-    usage: /aging <start|stop>
+    usage: /aging <start|stop|conf|restart|set|unset>
+    permission: op
+    permission-message: 権限がありません

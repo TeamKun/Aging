@@ -33,10 +33,7 @@ public class AgingCommandExecutor implements CommandExecutor, TabCompleter {
             return true;
         }
         if(args.length < 1) {
-            sender.sendMessage(ChatColor.RED + "usage: \n/aging <" + CommandConst.COMMAND_START + " | " + CommandConst.COMMAND_STOP + ">");
-            return true;
-        }
-        if(null == this.plugin) {
+            sender.sendMessage(ChatColor.RED + "usage: \n/aging <" + CommandConst.COMMAND_START + "|" + CommandConst.COMMAND_STOP + "|"+ CommandConst.COMMAND_CONF + "|" + CommandConst.COMMAND_RESTART + "|" + CommandConst.COMMAND_SET + "|" + CommandConst.COMMAND_UNSET + ">");
             return true;
         }
 
@@ -44,7 +41,7 @@ public class AgingCommandExecutor implements CommandExecutor, TabCompleter {
         switch (args[0]) {
             case CommandConst.COMMAND_START:
                 if(!(args.length == 1)) {
-                    sender.sendMessage(ChatColor.RED + "usage: \n/aging <" + CommandConst.COMMAND_START + " | " + CommandConst.COMMAND_STOP + ">");
+                    sender.sendMessage(ChatColor.RED + "usage: \n/aging <" + CommandConst.COMMAND_START + "|" + CommandConst.COMMAND_STOP + "|"+ CommandConst.COMMAND_CONF + "|" + CommandConst.COMMAND_RESTART + "|" + CommandConst.COMMAND_SET + "|" + CommandConst.COMMAND_UNSET + ">");
                     return true;
                 }
                 if(false == this.plugin.start()) {
@@ -55,7 +52,7 @@ public class AgingCommandExecutor implements CommandExecutor, TabCompleter {
                 break;
             case CommandConst.COMMAND_STOP:
                 if(!(args.length == 1)) {
-                    sender.sendMessage(ChatColor.RED + "usage: \n/aging <" + CommandConst.COMMAND_START + " | " + CommandConst.COMMAND_STOP + ">");
+                    sender.sendMessage(ChatColor.RED + "usage: \n/aging <" + CommandConst.COMMAND_START + "|" + CommandConst.COMMAND_STOP + "|"+ CommandConst.COMMAND_CONF + "|" + CommandConst.COMMAND_RESTART + "|" + CommandConst.COMMAND_SET + "|" + CommandConst.COMMAND_UNSET + ">");
                     return true;
                 }
                 if(false == this.plugin.stop()) {
@@ -88,7 +85,7 @@ public class AgingCommandExecutor implements CommandExecutor, TabCompleter {
                 break;
             case CommandConst.COMMAND_RESTART:
                 if(!(args.length == 1)) {
-                    sender.sendMessage(ChatColor.RED + "usage: \n/aging <" + CommandConst.COMMAND_SUSPEND + " | " + CommandConst.COMMAND_RESTART + ">");
+                    sender.sendMessage(ChatColor.RED + "usage: \n/aging <" + CommandConst.COMMAND_START + "|" + CommandConst.COMMAND_STOP + "|"+ CommandConst.COMMAND_CONF + "|" + CommandConst.COMMAND_RESTART + "|" + CommandConst.COMMAND_SET + "|" + CommandConst.COMMAND_UNSET + ">");
                     return true;
                 }
                 if(false == this.plugin.restart()) {
@@ -115,6 +112,10 @@ public class AgingCommandExecutor implements CommandExecutor, TabCompleter {
                 }
                 break;
             case CommandConst.COMMAND_SET:
+                if(false == plugin.isStarted()) {
+                    sender.sendMessage(ChatColor.RED + "error: 老化プラグインを開始させてから設定してください");
+                    return true;
+                }
                 message = checkSetArgs(args);
                 if(!message.isEmpty()) {
                     sender.sendMessage(ChatColor.RED + "error: " + message);
@@ -133,7 +134,7 @@ public class AgingCommandExecutor implements CommandExecutor, TabCompleter {
                 sender.sendMessage(ChatColor.GREEN + "info: " + message);
                 break;
             default:
-                sender.sendMessage(ChatColor.RED + "usage: \n/aging <" + CommandConst.COMMAND_START + " | " + CommandConst.COMMAND_STOP + ">");
+                sender.sendMessage(ChatColor.RED + "usage: \n/aging <" + CommandConst.COMMAND_START + "|" + CommandConst.COMMAND_STOP + "|"+ CommandConst.COMMAND_CONF + "|" + CommandConst.COMMAND_RESTART + "|" + CommandConst.COMMAND_SET + "|" + CommandConst.COMMAND_UNSET + ">");
                 break;
         }
         return true;

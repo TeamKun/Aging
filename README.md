@@ -10,9 +10,11 @@
         プラグイン有効化
     - stop
         プラグイン無効化
+    - restart
+        プラグイン再起動
     - conf
         - period <trik>
-          1年経過するのに必要なtrik数 [default: 100]
+          1年経過にかかるtrik数 [default: 100]
         - init_age <age>
           リスポーン時の年齢 [default: 0]
         - rejuvenate_age <age>

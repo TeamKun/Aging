@@ -31,7 +31,6 @@ public final class Aging extends JavaPlugin {
     @Override
     public void onEnable() {
         plugin = this;
-
         AgingCommandExecutor commandHandler = new AgingCommandExecutor(this);
         getCommand(CommandConst.MAIN_COMMAND).setExecutor(commandHandler);
     }
@@ -49,6 +48,7 @@ public final class Aging extends JavaPlugin {
         if(false == resome()) {
             return false;
         }
+        scoreboard = new AgingScoreBoard();
         initGame();
         listener = new PlayerEventListener(this);
         getServer().getPluginManager().registerEvents(listener, this);
@@ -101,10 +101,17 @@ public final class Aging extends JavaPlugin {
     }
 
     /**
+     * 老化プラグインが開始済みかチェックする
+     * @return boolean
+     */
+    public boolean isStarted() {
+        return task == null ? false : true;
+    }
+
+    /**
      * 老化プラグイン初期化処理
      */
     private void initGame() {
-        scoreboard = new AgingScoreBoard();
         for(Player player : Bukkit.getOnlinePlayers()) {
             initPlayer(player);
             scoreboard.setShowPlayer(player);
@@ -115,7 +122,7 @@ public final class Aging extends JavaPlugin {
      * プレイヤー初期化処理
      * @param player
      */
-    public void initPlayer(Player player) {
+    private void initPlayer(Player player) {
         int age = new Random().nextInt(Generation.Type.ELDERLY.max_age);
         setAge(player, age);
         setGeneration(player, Generation.getGeneration(age));
@@ -135,20 +142,16 @@ public final class Aging extends JavaPlugin {
 
         allPlayer.forEach((o_player) ->{
             Player player = (Player) o_player;
-
             if(GameMode.CREATIVE == player.getGameMode()) {
                 return;
             }
-
             // 年齢固定の場合は老化させない
             if(false == getIsAging(player)) {
                 return;
             }
-
             if(player.isDead()) {
                 return;
             }
-
             aging(player);
         });
     }
@@ -224,11 +227,20 @@ public final class Aging extends JavaPlugin {
         }
     }
 
+    /**
+     * リスポーン時の年齢再設定を行う
+     * @param player
+     */
     public void resetAge(Player player) {
         int init_age = getIsAging(player) ? getConfig().getInt(ConfigConst.INIT_AGE) : getAge(player);
         setPlayerAge(player, init_age);
     }
 
+    /**
+     * 若返り時の年齢再設定を行う
+     * @param player
+     * @return
+     */
     public String rejuvenateAge(Player player) {
         int rejuvenateAge = getConfig().getInt(ConfigConst.REJUVENATE_AGE);
         int age = getAge(player) - rejuvenateAge >= ConfigConst.AGE_0 ? getAge(player) - rejuvenateAge : ConfigConst.AGE_0 ;
@@ -237,6 +249,10 @@ public final class Aging extends JavaPlugin {
         return "昆布を食べたので " + rejuvenateAge + "歳若返った！[現在の年齢: "+ age + "歳]";
     }
 
+    /**
+     * 若返りアイテムの一覧を取得する
+     * @return List<Material> 若返りアイテム一覧
+     */
     public List<Material> getRejuvenateItems() {
         ArrayList<Material> list = new ArrayList<Material>();
 
@@ -247,10 +263,20 @@ public final class Aging extends JavaPlugin {
         return list;
     }
 
+    /**
+     * 発言時にチャット末尾に追加する文言があるかチェックする
+     * @param player
+     * @return boolean
+     */
     public boolean hasEndWord(Player player){
         return getConfig().contains(getGeneration(player).getPathName() + ConfigConst.ENDWORD);
     }
 
+    /**
+     * 発言時にチャット末尾に追加する文言を取得する
+     * @param player
+     * @return String 付与文字
+     */
     public String getEndWord(Player player) {
         if(hasEndWord(player)) {
             return getConfig().getString(getGeneration(player).getPathName() + ConfigConst.ENDWORD);
@@ -258,14 +284,29 @@ public final class Aging extends JavaPlugin {
         return "";
     }
 
+    /**
+     * 発言時に漢字を使えないかチェックする
+     * @param player
+     * @return boolean true:漢字使用不可, false: 漢字使用可
+     */
     public boolean isNotUseChineseCharacter(Player player) {
         return !getConfig().getBoolean(getGeneration(player).getPathName() + ConfigConst.USE_CHINESE_CHARACTER);
     }
 
+    /**
+     * 発言時にひらがなを「あはまわ行」へ変換するかチェックする
+     * @param player
+     * @return boolean true:変換する, false:変換しない
+     */
     public boolean isCheckHiragana(Player player) {
         return getConfig().getBoolean(getGeneration(player).getPathName() + ConfigConst.CHECK_HIRAGANA);
     }
 
+    /**
+     * 指定プレイヤーの世代が食べられるアイテムを取得する
+     * @param player
+     * @return List<Material> 食事制限がある世代は食べられるアイテム一覧。食事制限がない場合は空配列を返す。
+     */
     public List<Material> canEatItems(Player player) {
         Generation.Type generation = getGeneration(player);
         ArrayList<Material> list = new ArrayList<Material>();
@@ -281,11 +322,21 @@ public final class Aging extends JavaPlugin {
         return list;
     }
 
+    /**
+     * 食事制限があるかチェックする
+     * @param player
+     * @return boolean
+     */
     public boolean isEatAllItem(Player player) {
         Generation.Type generation = getGeneration(player);
         return getConfig().getStringList(generation.getPathName() + ConfigConst.CANEAT).isEmpty();
     }
 
+    /**
+     * プレイヤーの空腹値の上限を取得する
+     * @param player
+     * @return int 空腹値(0~20)
+     */
     public int getPlayerFoodLevel(Player player) {
         Generation.Type generation = getGeneration(player);
         return getConfig().getInt(generation.getPathName() + ConfigConst.FOOD_LEVEL);
