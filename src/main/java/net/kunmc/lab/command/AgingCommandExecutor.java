@@ -47,32 +47,55 @@ public class AgingCommandExecutor implements CommandExecutor, TabCompleter {
                     sender.sendMessage(ChatColor.RED + "usage: \n/aging <" + CommandConst.COMMAND_START + " | " + CommandConst.COMMAND_STOP + ">");
                     return true;
                 }
-                this.plugin.startGame();
-                sender.sendMessage(ChatColor.GREEN + "info: 老化プラグイン が起動しました");
+                if(false == this.plugin.start()) {
+                    sender.sendMessage(ChatColor.RED + "error: 老化プラグインはすでに起動されています");
+                    return true;
+                }
+                sender.sendMessage(ChatColor.GREEN + "info: 老化プラグインが起動しました");
                 break;
             case CommandConst.COMMAND_STOP:
                 if(!(args.length == 1)) {
                     sender.sendMessage(ChatColor.RED + "usage: \n/aging <" + CommandConst.COMMAND_START + " | " + CommandConst.COMMAND_STOP + ">");
                     return true;
                 }
-                this.plugin.stopGame();
-                sender.sendMessage(ChatColor.GREEN + "info: 老化プラグイン が停止しました");
+                if(false == this.plugin.stop()) {
+                    sender.sendMessage(ChatColor.RED + "error: 老化プラグインはまだ起動していません");
+                    return true;
+                }
+                sender.sendMessage(ChatColor.GREEN + "info: 老化プラグインが停止しました");
                 break;
             case CommandConst.COMMAND_SUSPEND:
                 if(!(args.length == 1)) {
                     sender.sendMessage(ChatColor.RED + "usage: \n/aging <" + CommandConst.COMMAND_SUSPEND + " | " + CommandConst.COMMAND_RESTART + ">");
                     return true;
                 }
-                this.plugin.suspend();
+                if(false == this.plugin.suspend()) {
+                    sender.sendMessage(ChatColor.RED + "error: 老化プラグインはまだ起動していません");
+                    return true;
+                }
                 sender.sendMessage(ChatColor.GREEN + "info: 老化プラグイン が一時停止されました");
+                break;
+            case CommandConst.COMMAND_RESOME:
+                if(!(args.length == 1)) {
+                    sender.sendMessage(ChatColor.RED + "usage: \n/aging <" + CommandConst.COMMAND_SUSPEND + " | " + CommandConst.COMMAND_RESTART + ">");
+                    return true;
+                }
+                if(false == this.plugin.resome()) {
+                    sender.sendMessage(ChatColor.RED + "error: 老化プラグインはすでに起動しています");
+                    return true;
+                }
+                sender.sendMessage(ChatColor.GREEN + "info: 老化プラグインが再開されました");
                 break;
             case CommandConst.COMMAND_RESTART:
                 if(!(args.length == 1)) {
                     sender.sendMessage(ChatColor.RED + "usage: \n/aging <" + CommandConst.COMMAND_SUSPEND + " | " + CommandConst.COMMAND_RESTART + ">");
                     return true;
                 }
-                this.plugin.restart();
-                sender.sendMessage(ChatColor.GREEN + "info: 老化プラグイン が再開されました");
+                if(false == this.plugin.restart()) {
+                    sender.sendMessage(ChatColor.RED + "error: 老化プラグインの再起動に失敗しました。stop->startを手動で実行してください。");
+                    return true;
+                }
+                sender.sendMessage(ChatColor.GREEN + "info: 老化プラグインが再起動しました");
                 break;
             case CommandConst.COMMAND_CONF:
                 try {
@@ -124,8 +147,8 @@ public class AgingCommandExecutor implements CommandExecutor, TabCompleter {
 
         if(1 == args.length) {
             return (sender.hasPermission(CommandConst.MAIN_COMMAND)
-                ? Stream.of(CommandConst.COMMAND_START, CommandConst.COMMAND_STOP, CommandConst.COMMAND_CONF, CommandConst.COMMAND_SET, CommandConst.COMMAND_UNSET)
-                : Stream.of(CommandConst.COMMAND_START, CommandConst.COMMAND_STOP, CommandConst.COMMAND_CONF, CommandConst.COMMAND_SET, CommandConst.COMMAND_UNSET)
+                ? Stream.of(CommandConst.COMMAND_START, CommandConst.COMMAND_STOP, CommandConst.COMMAND_CONF, CommandConst.COMMAND_SET, CommandConst.COMMAND_UNSET, CommandConst.COMMAND_RESTART)
+                : Stream.of(CommandConst.COMMAND_START, CommandConst.COMMAND_STOP, CommandConst.COMMAND_CONF, CommandConst.COMMAND_SET, CommandConst.COMMAND_UNSET, CommandConst.COMMAND_RESTART)
             ).filter(e -> e.startsWith(args[0])).collect(Collectors.toList());
         }
 
@@ -267,7 +290,7 @@ public class AgingCommandExecutor implements CommandExecutor, TabCompleter {
         if(ConfigConst.PERIOD.equals(args[1])) {
             int trik = Integer.parseInt(args[2]);
             plugin.setConfig(ConfigConst.PERIOD, trik);
-            return "1年経過するのに必要なtrik数を " + trik + " に変更しました";
+            return "1年経過のtrik数を " + trik + " に変更しました。restartで反映されます。";
         }
 
         if(ConfigConst.INIT_AGE.equals(args[1])) {

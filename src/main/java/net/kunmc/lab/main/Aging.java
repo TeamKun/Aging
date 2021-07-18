@@ -43,45 +43,61 @@ public final class Aging extends JavaPlugin {
 
     /**
      * 老化プラグインの開始処理
+     * @return boolean true: 開始成功, false: 開始失敗
      */
-    public boolean startGame() {
+    public boolean start() {
+        if(false == resome()) {
+            return false;
+        }
         initGame();
         listener = new PlayerEventListener(this);
         getServer().getPluginManager().registerEvents(listener, this);
-
-        int period = getConfig().getInt(ConfigConst.PERIOD);
-        task = new AgingTask(this).runTaskTimer(this, period, period);
         return true;
     }
 
     /**
      * 老化プラグインの終了処理
+     * @return boolean true: 終了成功, false: 終了失敗
      */
-    public boolean stopGame() {
-        task.cancel();
+    public boolean stop() {
+        if(false == suspend()) {
+            return false;
+        }
         HandlerList.unregisterAll(listener);
         listener = null;
-
         scoreboard.remove();
         scoreboard = null;
         return true;
     }
 
     /**
-     * 老化プラグインの中断処理
+     * 老化プラグインの年経過停止
+     * @return boolean
      */
     public boolean suspend() {
+        if(task == null) {
+            return false;
+        }
         task.cancel();
+        task = null;
         return true;
     }
 
     /**
-     * 老化プラグインの再開処理
+     * 老化プラグインの年経過再開
+     * @return boolean
      */
-    public boolean restart() {
+    public boolean resome() {
+        if(task != null) {
+            return false;
+        }
         int period = getConfig().getInt(ConfigConst.PERIOD);
         task = new AgingTask(this).runTaskTimer(this, period, period);
         return true;
+    }
+
+    public boolean restart() {
+        return suspend() && resome();
     }
 
     /**
