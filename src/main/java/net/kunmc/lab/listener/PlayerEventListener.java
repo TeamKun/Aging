@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
 import java.util.HashMap;
@@ -85,6 +86,17 @@ public class PlayerEventListener implements Listener {
     public void onPlayerRespawn(PlayerRespawnEvent e) {
         Player player = e.getPlayer();
         plugin.resetAge(player);
+    }
+
+    @EventHandler
+    public void onFoodLevelChange(FoodLevelChangeEvent e) {
+        Player player = (Player) e.getEntity();
+        int foodLevel = plugin.getPlayerFoodLevel(player);
+        if( foodLevel < player.getFoodLevel() + e.getFoodLevel()) {
+            e.setFoodLevel(foodLevel);
+            e.setCancelled(true);
+            player.sendMessage("老化で満腹まで食べられない！");
+        }
     }
 
     @EventHandler

@@ -270,6 +270,11 @@ public final class Aging extends JavaPlugin {
         return getConfig().getStringList(generation.getPathName() + ConfigConst.CANEAT).isEmpty();
     }
 
+    public int getPlayerFoodLevel(Player player) {
+        Generation.Type generation = getGeneration(player);
+        return getConfig().getInt(generation.getPathName() + ConfigConst.FOOD_LEVEL);
+    }
+
     private void setMetaData(Player player, String key, Object value) {
         player.setMetadata(key, new FixedMetadataValue(this, value));
     }
