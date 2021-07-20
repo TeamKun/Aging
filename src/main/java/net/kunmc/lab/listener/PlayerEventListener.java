@@ -68,6 +68,9 @@ public class PlayerEventListener implements Listener {
         if(EntityDamageEvent.DamageCause.CUSTOM.equals(e.getEntity().getLastDamageCause())) {
             return;
         }
+        if(false == Generation.Type.ELDERLY.equals(plugin.getGeneration(player))) {
+            return;
+        }
 
         // 老衰
         if(Generation.Type.ELDERLY.max_age <= plugin.getAge(player)) {
