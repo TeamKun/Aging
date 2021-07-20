@@ -98,7 +98,6 @@ public class PlayerEventListener implements Listener {
         if( foodLevel < player.getFoodLevel() + e.getFoodLevel()) {
             e.setFoodLevel(foodLevel);
             e.setCancelled(true);
-            player.sendMessage("老化で満腹まで食べられない！");
         }
     }
 
@@ -116,6 +115,14 @@ public class PlayerEventListener implements Listener {
             }
         }
 
+        // 空腹値の上限
+        int foodLevel = plugin.getPlayerFoodLevel(player);
+        if(foodLevel <= player.getFoodLevel() && ConfigConst.DEF_FOOD_LEVEL != foodLevel) {
+            e.setCancelled(true);
+            player.sendMessage("老化で満腹まで食べられない！");
+            return;
+        }
+
         // 食べられるアイテムに制限がない
         if(plugin.isEatAllItem(player)) {
             return;
@@ -127,7 +134,6 @@ public class PlayerEventListener implements Listener {
                 return;
             }
         }
-
         player.sendMessage("この食べ物は固くて食べられない！");
         e.setCancelled(true);
     }
