@@ -17,6 +17,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import java.util.*;
 import java.util.logging.Level;
@@ -211,13 +212,13 @@ public final class Aging extends JavaPlugin {
         player.setMaxHealth(maxHp);
 
         // 空腹
-        task = Bukkit.getScheduler().runTaskTimer(this, new Runnable() {
+        new BukkitRunnable(){
             @Override
             public void run() {
                 int foodLevel = getConfig().getInt(nextGeneration.getPathName() + ConfigConst.FOOD_LEVEL);
                 player.setFoodLevel(foodLevel);
             }
-        }, 0, 10);
+        }.runTaskLater(this, 0);
     }
 
     /**
