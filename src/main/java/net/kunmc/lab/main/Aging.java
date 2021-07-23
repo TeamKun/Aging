@@ -192,7 +192,32 @@ public final class Aging extends JavaPlugin {
         if(generation.equals(nextGeneration) ) {
             return;
         }
+        player.sendMessage(nextGeneration.getMessage());
         setPlayerGeneration(player, nextGeneration);
+    }
+
+    /**
+     * プレイヤーの年齢と世代を強制的に上書きする
+     * @param player
+     * @param age
+     */
+    public void setPlayerAgeForce(Player player, int age) {
+        setAge(player, age);
+        scoreboard.setScore(player.getName(), age);
+        Generation.Type nextGeneration = Generation.getGeneration(age);
+
+        // HP
+        double maxHp = getConfig().getDouble(nextGeneration.getPathName() + ConfigConst.MAX_HP);
+        player.setMaxHealth(maxHp);
+
+        // 空腹
+        task = Bukkit.getScheduler().runTaskTimer(this, new Runnable() {
+            @Override
+            public void run() {
+                int foodLevel = getConfig().getInt(nextGeneration.getPathName() + ConfigConst.FOOD_LEVEL);
+                player.setFoodLevel(foodLevel);
+            }
+        }, 0, 10);
     }
 
     /**
@@ -203,7 +228,6 @@ public final class Aging extends JavaPlugin {
     public void setPlayerGeneration(Player player, Generation.Type generation) {
         try {
             // 世代更新メッセージ
-            player.sendMessage(generation.getMessage());
             setGeneration(player, generation);
 
             // 歩行速度
@@ -231,7 +255,11 @@ public final class Aging extends JavaPlugin {
      */
     public void resetAge(Player player) {
         int init_age = getIsAging(player) ? getConfig().getInt(ConfigConst.INIT_AGE) : getAge(player);
-        setPlayerAge(player, init_age);
+        if(getIsAging(player)) {
+            setPlayerAge(player, init_age);
+            return;
+        }
+        setPlayerAgeForce(player, init_age);
     }
 
     /**
