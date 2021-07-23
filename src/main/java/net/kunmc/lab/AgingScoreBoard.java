@@ -1,43 +1,105 @@
 package net.kunmc.lab;
 
+import net.kunmc.lab.constants.Generation;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Score;
-import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.*;
 
 public class AgingScoreBoard {
-    public final static String OBJECTIVE_NAME  = "generation";
-
+    private final static String OBJECTIVE_NAME  = "showGeneration";
     private Scoreboard scoreboard;
-    private String title;
+    private Team teamBaby;
+    private Team teamKids;
+    private Team teamYoung;
+    private Team teamAdult;
+    private Team teamElderly;
 
     public AgingScoreBoard() {
         scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-        Objective sidebar = scoreboard.registerNewObjective(OBJECTIVE_NAME, "dummy");
-        sidebar.setDisplaySlot(DisplaySlot.PLAYER_LIST);
-        title = "世代";
+        teamBaby = initTeam(Generation.Type.BABY);
+        teamKids = initTeam(Generation.Type.KIDS);
+        teamYoung = initTeam(Generation.Type.YOUNG);
+        teamAdult = initTeam(Generation.Type.ADULT);
+        teamElderly = initTeam(Generation.Type.ELDERLY);
+
+        Objective objective = scoreboard.registerNewObjective(OBJECTIVE_NAME, "dummy");
+        objective.setDisplaySlot(DisplaySlot.PLAYER_LIST);
+    }
+
+    private Team initTeam(Generation.Type generation) {
+        Team team = scoreboard.registerNewTeam(generation.name);
+        team.setSuffix(generation.color.toString() + "歳 (" + generation.dispName + ")");
+        team.setSuffix(ChatColor.RESET.toString());
+        team.setDisplayName(generation.dispName);
+        team.setColor(generation.color);
+        team.setAllowFriendlyFire(true);
+        team.setCanSeeFriendlyInvisibles(false);
+        return team;
+    }
+
+    private void destroyTeam() {
+        teamBaby.unregister();
+        teamKids.unregister();
+        teamYoung.unregister();
+        teamAdult.unregister();
+        teamElderly.unregister();
+        teamBaby = null;
+        teamKids = null;
+        teamYoung = null;
+        teamAdult = null;
+        teamElderly = null;
+    }
+
+    public void remove(){
+        destroyTeam();
+    }
+
+    private Team getTeamByGeneration(Generation.Type generation) {
+        switch (generation) {
+            case BABY:
+                return teamBaby;
+            case KIDS:
+                return teamKids;
+            case YOUNG:
+                return teamYoung;
+            case ADULT:
+                return  teamAdult;
+            case ELDERLY:
+                return teamElderly;
+            default:
+                return null;
+        }
+    }
+
+    public boolean addTeam(Player player, Generation.Type generation) {
+        Team team = getTeamByGeneration(generation);
+        if(null == team) {
+            return false;
+        }
+        team.addEntry(player.getName());
+        return true;
+    }
+
+    public boolean removeTeam(Player player, Generation.Type generation) {
+        Team team = getTeamByGeneration(generation);
+        if(null == team) {
+            return false;
+        }
+        team.removeEntry(player.getName());
+        return true;
     }
 
     public void setShowPlayer(Player player) {
         player.setScoreboard(scoreboard);
     }
 
-    public void setScore(String name, int point) {
-        Objective obj = scoreboard.getObjective(OBJECTIVE_NAME);
-        getScoreItem(obj, name).setScore(point);
-    }
+    public void setScore(Player player, int age) {
+        Objective objective = scoreboard.getObjective(OBJECTIVE_NAME);
+        objective.getScore(player).setScore(age);
 
-    private Score getScoreItem(Objective obj, String name) {
-        return obj.getScore(name);
-    }
-
-    public void remove() {
-        if ( scoreboard.getObjective(DisplaySlot.PLAYER_LIST) != null ) {
-            scoreboard.getObjective(DisplaySlot.PLAYER_LIST).unregister();
-        }
-        scoreboard.clearSlot(DisplaySlot.PLAYER_LIST);
+        Generation.Type generation = Generation.getGeneration(age);
+        addTeam(player, generation);
     }
 
 }

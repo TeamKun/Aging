@@ -8,7 +8,6 @@ import net.kunmc.lab.constants.Generation;
 import net.kunmc.lab.listener.PlayerEventListener;
 import net.kunmc.lab.task.AgingTask;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -19,6 +18,7 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+
 import java.util.*;
 import java.util.logging.Level;
 
@@ -124,11 +124,13 @@ public final class Aging extends JavaPlugin {
      */
     private void initPlayer(Player player) {
         int age = new Random().nextInt(Generation.Type.ELDERLY.max_age);
+        Generation.Type generation = Generation.getGeneration(age);
         setAge(player, age);
-        setGeneration(player, Generation.getGeneration(age));
+        setGeneration(player, generation);
         setIsAging(player, true);
 
-        scoreboard.setScore(player.getName(), age);
+        scoreboard.addTeam(player, generation);
+        scoreboard.setScore(player, age);
     }
 
     /**
@@ -172,7 +174,6 @@ public final class Aging extends JavaPlugin {
 
         // 各種表示
         Generation.Type generation = getGeneration(player);
-        player.setDisplayName(ChatColor.WHITE + player.getName() + generation.color + " [" + generation.dispName + "]" + ChatColor.RESET);
         getServer().getLogger().info(player.getName() + " " + age + "歳(" + generation + ")");
 
     }
@@ -186,7 +187,7 @@ public final class Aging extends JavaPlugin {
         Generation.Type generation = Generation.getGeneration(getAge(player));
 
         setAge(player, age);
-        scoreboard.setScore(player.getName(), age);
+        scoreboard.setScore(player, age);
 
         // 世代更新がある場合
         Generation.Type nextGeneration = Generation.getGeneration(age);
@@ -204,7 +205,7 @@ public final class Aging extends JavaPlugin {
      */
     public void setPlayerAgeForce(Player player, int age) {
         setAge(player, age);
-        scoreboard.setScore(player.getName(), age);
+        //scoreboard.setScore(player.getName(), age);
         Generation.Type nextGeneration = Generation.getGeneration(age);
 
         // HP
