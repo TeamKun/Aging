@@ -15,8 +15,10 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
+
 import java.util.HashMap;
 import java.util.UUID;
+
 import static net.kyori.adventure.text.Component.text;
 
 public class PlayerEventListener implements Listener {
@@ -26,36 +28,36 @@ public class PlayerEventListener implements Listener {
 
     public PlayerEventListener(Aging plugin) {
         this.plugin = plugin;
-        fallDistanceMap = new HashMap<UUID, Float>();
+        fallDistanceMap = new HashMap<>();
     }
 
     @EventHandler
-    public void onPlayerMove(PlayerMoveEvent e){
+    public void onPlayerMove(PlayerMoveEvent e) {
         Player player = e.getPlayer();
-        if(false == Generation.Type.ELDERLY.equals(plugin.getGeneration(player))) {
+        if (!Generation.Type.ELDERLY.equals(plugin.getGeneration(player))) {
             return;
         }
 
         UUID uuid = player.getUniqueId();
         float distance = player.getFallDistance();
 
-        if(distance > 0) {
-            if(false == fallDistanceMap.containsKey(uuid)) {
-                fallDistanceMap.put(uuid, new Float(distance));
+        if (distance > 0) {
+            if (!fallDistanceMap.containsKey(uuid)) {
+                fallDistanceMap.put(uuid, distance);
                 return;
             }
 
-            Float sumDistance = new Float(distance) + fallDistanceMap.get(uuid);
+            Float sumDistance = distance + fallDistanceMap.get(uuid);
             fallDistanceMap.put(uuid, sumDistance);
             return;
         }
 
-        if(false == fallDistanceMap.containsKey(uuid)) {
+        if (!fallDistanceMap.containsKey(uuid)) {
             return;
         }
 
         // 上下移動の累積が一定数以上は1マスより高いところから落下したと判定
-        if(4.0 < fallDistanceMap.get(uuid)) {
+        if (4.0 < fallDistanceMap.get(uuid)) {
             player.damage(ConfigConst.DAMAGE);
             player.setLastDamageCause(new EntityDamageEvent(player, EntityDamageEvent.DamageCause.CUSTOM, ConfigConst.DAMAGE));
         }
@@ -65,15 +67,15 @@ public class PlayerEventListener implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent e) {
         Player player = e.getEntity();
-        if(EntityDamageEvent.DamageCause.CUSTOM.equals(e.getEntity().getLastDamageCause())) {
+        if (EntityDamageEvent.DamageCause.CUSTOM.equals(e.getEntity().getLastDamageCause().getCause())) {
             return;
         }
-        if(false == Generation.Type.ELDERLY.equals(plugin.getGeneration(player))) {
+        if (!Generation.Type.ELDERLY.equals(plugin.getGeneration(player))) {
             return;
         }
 
         // 老衰
-        if(Generation.Type.ELDERLY.max_age <= plugin.getAge(player)) {
+        if (Generation.Type.ELDERLY.max_age <= plugin.getAge(player)) {
             Component message = LinearComponents.linear(NamedTextColor.WHITE, text(player.getName() + " は老衰で死んでしまった"));
             e.deathMessage(message);
             return;
@@ -82,7 +84,6 @@ public class PlayerEventListener implements Listener {
         // 骨折
         Component message = LinearComponents.linear(NamedTextColor.WHITE, text(player.getName() + " は骨が折れて死んでしまった"));
         e.deathMessage(message);
-        return;
     }
 
     @EventHandler
@@ -95,7 +96,7 @@ public class PlayerEventListener implements Listener {
     public void onFoodLevelChange(FoodLevelChangeEvent e) {
         Player player = (Player) e.getEntity();
         int foodLevel = plugin.getPlayerFoodLevel(player);
-        if( foodLevel < player.getFoodLevel() + e.getFoodLevel()) {
+        if (foodLevel < player.getFoodLevel() + e.getFoodLevel()) {
             e.setFoodLevel(foodLevel);
             e.setCancelled(true);
         }
@@ -107,8 +108,8 @@ public class PlayerEventListener implements Listener {
         Material material = e.getItem().getType();
 
         // 若返りアイテム
-        for(Material rejuvenateItem : plugin.getRejuvenateItems()) {
-            if(rejuvenateItem.equals(material)) {
+        for (Material rejuvenateItem : plugin.getRejuvenateItems()) {
+            if (rejuvenateItem.equals(material)) {
                 String message = plugin.rejuvenateAge(player);
                 player.sendMessage(message);
                 return;
@@ -117,20 +118,20 @@ public class PlayerEventListener implements Listener {
 
         // 空腹値の上限
         int foodLevel = plugin.getPlayerFoodLevel(player);
-        if(foodLevel <= player.getFoodLevel() && ConfigConst.DEF_FOOD_LEVEL != foodLevel) {
+        if (foodLevel <= player.getFoodLevel() && ConfigConst.DEF_FOOD_LEVEL != foodLevel) {
             e.setCancelled(true);
             player.sendMessage("老化で満腹まで食べられない！");
             return;
         }
 
         // 食べられるアイテムに制限がない
-        if(plugin.isEatAllItem(player)) {
+        if (plugin.isEatAllItem(player)) {
             return;
         }
 
         // 食事制限がある場合は食べられるものかチェックする
-        for ( Material canEatMaterial : plugin.canEatItems(player)) {
-            if(canEatMaterial.equals(material)) {
+        for (Material canEatMaterial : plugin.canEatItems(player)) {
+            if (canEatMaterial.equals(material)) {
                 return;
             }
         }
@@ -140,7 +141,7 @@ public class PlayerEventListener implements Listener {
 
     @EventHandler
     public void onChat(AsyncPlayerChatEvent e) {
-        if(e.isCancelled()) {
+        if (e.isCancelled()) {
             return;
         }
         Player player = e.getPlayer();
@@ -154,19 +155,18 @@ public class PlayerEventListener implements Listener {
         }
 
         // 使用できないひらがなを置換する
-        if(plugin.isCheckHiragana(player)){
+        if (plugin.isCheckHiragana(player)) {
             e.setMessage(HiraganaConverter.convertText(message));
             return;
         }
 
         // 特定の文字しか使用できない場合は文字数分置換する
         if (plugin.hasEndWord(player)) {
-            String replacedText = "";
-            for(int i=0; i<message.length(); i++) {
-                replacedText = replacedText + plugin.getEndWord(player);
+            StringBuilder replacedText = new StringBuilder();
+            for (int i = 0; i < message.length(); i++) {
+                replacedText.append(plugin.getEndWord(player));
             }
-            e.setMessage(replacedText);
-            return;
+            e.setMessage(replacedText.toString());
         }
     }
 

@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
 
 public class AgingScoreBoard {
-    private final static String OBJECTIVE_NAME  = "showGeneration";
+    private final static String OBJECTIVE_NAME = "showGeneration";
     private Scoreboard scoreboard;
     private Team teamBaby;
     private Team teamKids;
@@ -51,7 +51,7 @@ public class AgingScoreBoard {
         teamElderly = null;
     }
 
-    public void remove(){
+    public void remove() {
         destroyTeam();
     }
 
@@ -64,7 +64,7 @@ public class AgingScoreBoard {
             case YOUNG:
                 return teamYoung;
             case ADULT:
-                return  teamAdult;
+                return teamAdult;
             case ELDERLY:
                 return teamElderly;
             default:
@@ -74,7 +74,7 @@ public class AgingScoreBoard {
 
     public boolean addTeam(Player player, Generation.Type generation) {
         Team team = getTeamByGeneration(generation);
-        if(null == team) {
+        if (null == team) {
             return false;
         }
         team.addEntry(player.getName());
@@ -83,7 +83,7 @@ public class AgingScoreBoard {
 
     public boolean removeTeam(Player player, Generation.Type generation) {
         Team team = getTeamByGeneration(generation);
-        if(null == team) {
+        if (null == team) {
             return false;
         }
         team.removeEntry(player.getName());
@@ -96,7 +96,13 @@ public class AgingScoreBoard {
 
     public void setScore(Player player, int age) {
         Objective objective = scoreboard.getObjective(OBJECTIVE_NAME);
-        objective.getScore(player).setScore(age);
+        Score score;
+        try {
+            score = objective.getScore(player);
+        } catch(NullPointerException e) {
+            return;
+        }
+        score.setScore(age);
 
         Generation.Type generation = Generation.getGeneration(age);
         addTeam(player, generation);

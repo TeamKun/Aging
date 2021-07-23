@@ -19,5 +19,6 @@ public final class CommandConst {
     public final static int MIN_REJUVENATE_AGE = 0;
     public final static int MAX_REJUVENATE_AGE = 99;
 
-    private CommandConst() {}
+    private CommandConst() {
+    }
 }

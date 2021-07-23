@@ -17,7 +17,7 @@ public final class ConfigConst {
     public final static String CHECK_HIRAGANA = "checkHiragana";
 
     public final static String INIT_AGE = "init_age";
-    public final static String REJUVENATE_AGE ="rejuvenate_age";
+    public final static String REJUVENATE_AGE = "rejuvenate_age";
     public final static String REJUVENATE_ITEMS = "rejuvenate_item";
 
     // 最高年齢に到達時のダメージ
@@ -29,5 +29,6 @@ public final class ConfigConst {
     // デフォルト
     public final static int DEF_FOOD_LEVEL = 20;
 
-    private ConfigConst(){}
+    private ConfigConst() {
+    }
 }

@@ -5,11 +5,11 @@ import org.bukkit.ChatColor;
 
 public class Generation {
     public enum Type {
-        ELDERLY("elderly", "老人",66, 99, null, ChatColor.RED),
-        ADULT("adult", "大人",30, 65, ELDERLY, ChatColor.GOLD),
-        YOUNG("young", "若者",20, 29, ADULT, ChatColor.YELLOW),
-        KIDS("kids", "未成年",6, 19, YOUNG, ChatColor.GREEN),
-        BABY("baby", "赤ちゃん",0, 5, KIDS, ChatColor.BLUE);
+        ELDERLY("elderly", "老人", 66, 99, null, ChatColor.RED),
+        ADULT("adult", "大人", 30, 65, ELDERLY, ChatColor.GOLD),
+        YOUNG("young", "若者", 20, 29, ADULT, ChatColor.YELLOW),
+        KIDS("kids", "未成年", 6, 19, YOUNG, ChatColor.GREEN),
+        BABY("baby", "赤ちゃん", 0, 5, KIDS, ChatColor.BLUE);
 
         public final String name;
         public final String dispName;
@@ -28,7 +28,7 @@ public class Generation {
         }
 
         public String getPathName() {
-            return this.name + "." ;
+            return this.name + ".";
         }
 
         public String getMessage() {
@@ -38,23 +38,24 @@ public class Generation {
 
     /**
      * 引数の年齢がどの世代に該当するか判定する
-     * @param age　判定対象の年齢
+     *
+     * @param age 　判定対象の年齢
      * @return Generation.Type 世代
      */
     public static Type getGeneration(int age) {
-        if(Type.BABY.max_age >= age) {
+        if (Type.BABY.max_age >= age) {
             return Type.BABY;
         }
-        if(Type.KIDS.max_age >= age) {
+        if (Type.KIDS.max_age >= age) {
             return Type.KIDS;
         }
-        if(Type.YOUNG.max_age >= age) {
+        if (Type.YOUNG.max_age >= age) {
             return Type.YOUNG;
         }
-        if(Type.ADULT.max_age >= age) {
+        if (Type.ADULT.max_age >= age) {
             return Type.ADULT;
         }
-        if(Type.ELDERLY.max_age >= age) {
+        if (Type.ELDERLY.max_age >= age) {
             return Type.ELDERLY;
         }
         return null;
