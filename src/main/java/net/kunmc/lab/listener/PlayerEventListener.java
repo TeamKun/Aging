@@ -7,6 +7,7 @@ import net.kunmc.lab.constants.Generation;
 import net.kyori.adventure.text.*;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -15,10 +16,8 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
-
 import java.util.HashMap;
 import java.util.UUID;
-
 import static net.kyori.adventure.text.Component.text;
 
 public class PlayerEventListener implements Listener {
@@ -34,6 +33,9 @@ public class PlayerEventListener implements Listener {
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent e) {
         Player player = e.getPlayer();
+        if (GameMode.CREATIVE.equals(player.getGameMode())) {
+            return;
+        }
         if (!Generation.Type.ELDERLY.equals(plugin.getGeneration(player))) {
             return;
         }
@@ -95,6 +97,9 @@ public class PlayerEventListener implements Listener {
     @EventHandler
     public void onFoodLevelChange(FoodLevelChangeEvent e) {
         Player player = (Player) e.getEntity();
+        if (GameMode.CREATIVE.equals(player.getGameMode())) {
+            return;
+        }
         int foodLevel = plugin.getPlayerFoodLevel(player);
         if (foodLevel < player.getFoodLevel() + e.getFoodLevel()) {
             e.setFoodLevel(foodLevel);
@@ -106,6 +111,9 @@ public class PlayerEventListener implements Listener {
     public void onPlayerItemConsumeEvent(PlayerItemConsumeEvent e) {
         Player player = e.getPlayer();
         Material material = e.getItem().getType();
+        if (GameMode.CREATIVE.equals(player.getGameMode())) {
+            return;
+        }
 
         // 若返りアイテム
         for (Material rejuvenateItem : plugin.getRejuvenateItems()) {
@@ -146,6 +154,10 @@ public class PlayerEventListener implements Listener {
         }
         Player player = e.getPlayer();
         String message = e.getMessage();
+
+        if (GameMode.CREATIVE.equals(player.getGameMode())) {
+            return;
+        }
 
         // 漢字の入力制限
         if (plugin.isNotUseChineseCharacter(player) && hasChineseCharacter(message)) {
