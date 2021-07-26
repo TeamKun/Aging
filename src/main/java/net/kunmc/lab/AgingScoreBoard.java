@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
 
 public class AgingScoreBoard {
-    private final static String OBJECTIVE_NAME = "showGeneration";
+    private final static String OBJECTIVE_NAME = "歳";
     private Scoreboard scoreboard;
     private Team teamBaby;
     private Team teamKids;
@@ -24,15 +24,12 @@ public class AgingScoreBoard {
         teamElderly = initTeam(Generation.Type.ELDERLY);
 
         Objective objective = scoreboard.registerNewObjective(OBJECTIVE_NAME, "dummy");
-        objective.setDisplaySlot(DisplaySlot.PLAYER_LIST);
+        objective.setDisplaySlot(DisplaySlot.BELOW_NAME);
     }
 
     private Team initTeam(Generation.Type generation) {
         Team team = scoreboard.registerNewTeam(generation.name);
-        team.setSuffix(generation.color.toString() + "歳 (" + generation.dispName + ")");
-        team.setSuffix(ChatColor.RESET.toString());
-        team.setDisplayName(generation.dispName);
-        team.setColor(generation.color);
+        team.setSuffix(generation.color.toString() + " " + generation.dispName + ChatColor.RESET.toString() );
         team.setAllowFriendlyFire(true);
         team.setCanSeeFriendlyInvisibles(false);
         return team;
