@@ -23,7 +23,7 @@ import static net.kyori.adventure.text.Component.text;
 public class PlayerEventListener implements Listener {
 
     private Aging plugin;
-    private HashMap<UUID, Float> fallDistanceMap;
+    private HashMap<UUID, Double> fallDistanceMap;
 
     public PlayerEventListener(Aging plugin) {
         this.plugin = plugin;
@@ -41,25 +41,17 @@ public class PlayerEventListener implements Listener {
         }
 
         UUID uuid = player.getUniqueId();
-        float distance = player.getFallDistance();
-
-        if (distance > 0) {
-            if (!fallDistanceMap.containsKey(uuid)) {
-                fallDistanceMap.put(uuid, distance);
-                return;
-            }
-
-            Float sumDistance = distance + fallDistanceMap.get(uuid);
-            fallDistanceMap.put(uuid, sumDistance);
+        if(!player.isOnGround()) {
             return;
         }
 
         if (!fallDistanceMap.containsKey(uuid)) {
+            fallDistanceMap.put(uuid, e.getTo().getY());
             return;
         }
 
-        // 上下移動の累積が一定数以上は1マスより高いところから落下したと判定
-        if (4.0 < fallDistanceMap.get(uuid)) {
+        // 上下移動が一定数以上は高いところから落下したと判定
+        if (2.0 <= fallDistanceMap.get(uuid) - e.getTo().getY()) {
             player.damage(ConfigConst.DAMAGE);
             player.setLastDamageCause(new EntityDamageEvent(player, EntityDamageEvent.DamageCause.CUSTOM, ConfigConst.DAMAGE));
         }
@@ -69,7 +61,7 @@ public class PlayerEventListener implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent e) {
         Player player = e.getEntity();
-        if (EntityDamageEvent.DamageCause.CUSTOM.equals(e.getEntity().getLastDamageCause().getCause())) {
+        if (EntityDamageEvent.DamageCause.CUSTOM != e.getEntity().getLastDamageCause().getCause()) {
             return;
         }
         if (!Generation.Type.ELDERLY.equals(plugin.getGeneration(player))) {
