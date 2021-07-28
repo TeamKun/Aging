@@ -1,6 +1,5 @@
 package net.kunmc.lab.constants;
 
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 
 public class Generation {
@@ -9,7 +8,7 @@ public class Generation {
         ADULT("adult", "大人", 30, 65, ELDERLY, ChatColor.GOLD),
         YOUNG("young", "若者", 20, 29, ADULT, ChatColor.YELLOW),
         KIDS("kids", "未成年", 6, 19, YOUNG, ChatColor.GREEN),
-        BABY("baby", "赤ちゃん", 0, 5, KIDS, ChatColor.BLUE);
+        BABY("baby", "赤ちゃん", 0, 5, KIDS, ChatColor.AQUA);
 
         public final String name;
         public final String dispName;

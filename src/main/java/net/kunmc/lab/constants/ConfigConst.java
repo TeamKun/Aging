@@ -28,6 +28,7 @@ public final class ConfigConst {
 
     // デフォルト
     public final static int DEF_FOOD_LEVEL = 20;
+    public final static int DEF_HP = 20;
 
     private ConfigConst() {
     }

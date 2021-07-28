@@ -18,7 +18,6 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
-
 import java.util.*;
 import java.util.logging.Level;
 
@@ -69,6 +68,7 @@ public final class Aging extends JavaPlugin {
         listener = null;
         scoreboard.remove();
         scoreboard = null;
+        endGame();
         return true;
     }
 
@@ -120,6 +120,16 @@ public final class Aging extends JavaPlugin {
         for (Player player : Bukkit.getOnlinePlayers()) {
             initPlayer(player);
             scoreboard.setShowPlayer(player);
+        }
+    }
+
+    /**
+     * 老化プラグイン終了処理
+     */
+    private void endGame() {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            player.setMaxHealth(ConfigConst.DEF_HP);
+            player.setFoodLevel(ConfigConst.DEF_FOOD_LEVEL);
         }
     }
 
