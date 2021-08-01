@@ -298,7 +298,7 @@ public class AgingCommandExecutor implements CommandExecutor, TabCompleter {
         if (ConfigConst.PERIOD.equals(args[1])) {
             int trik = Integer.parseInt(args[2]);
             plugin.setConfig(ConfigConst.PERIOD, trik);
-            return "1年経過のtrik数を " + trik + " に変更しました。restartで反映されます。";
+            return "1年経過のtrik数を " + trik + " に変更しました。起動中の場合はrestartで反映できます。";
         }
 
         if (ConfigConst.INIT_AGE.equals(args[1])) {

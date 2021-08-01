@@ -178,4 +178,9 @@ public class PlayerEventListener implements Listener {
         return text.matches(".*[一-龠].*");
     }
 
+    @EventHandler
+    public void onPlayerJoinEvent(PlayerJoinEvent e) {
+        plugin.initPlayer(e.getPlayer());
+    }
+
 }

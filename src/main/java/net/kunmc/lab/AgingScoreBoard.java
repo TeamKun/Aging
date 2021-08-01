@@ -50,6 +50,8 @@ public class AgingScoreBoard {
 
     public void remove() {
         destroyTeam();
+        Objective objective = scoreboard.getObjective(OBJECTIVE_NAME);
+        objective.unregister();
     }
 
     private Team getTeamByGeneration(Generation.Type generation) {

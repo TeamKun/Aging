@@ -119,7 +119,6 @@ public final class Aging extends JavaPlugin {
     private void initGame() {
         for (Player player : Bukkit.getOnlinePlayers()) {
             initPlayer(player);
-            scoreboard.setShowPlayer(player);
         }
     }
 
@@ -139,13 +138,14 @@ public final class Aging extends JavaPlugin {
      *
      * @param player プレイヤー
      */
-    private void initPlayer(Player player) {
+    public void initPlayer(Player player) {
         int age = new Random().nextInt(Generation.Type.ELDERLY.max_age);
         Generation.Type generation = Generation.getGeneration(age);
         setAge(player, age);
         setGeneration(player, generation);
         setIsAging(player, true);
 
+        scoreboard.setShowPlayer(player);
         scoreboard.addTeam(player, generation);
         scoreboard.setScore(player, age);
     }
@@ -191,8 +191,6 @@ public final class Aging extends JavaPlugin {
 
         // 各種表示
         Generation.Type generation = getGeneration(player);
-        getServer().getLogger().info(player.getName() + " " + age + "歳(" + generation + ")");
-
     }
 
     /**
@@ -224,7 +222,6 @@ public final class Aging extends JavaPlugin {
      */
     public void setPlayerAgeForce(Player player, int age) {
         setAge(player, age);
-        //scoreboard.setScore(player.getName(), age);
         Generation.Type nextGeneration = Generation.getGeneration(age);
 
         // HP
