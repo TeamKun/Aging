@@ -130,6 +130,7 @@ public final class Aging extends JavaPlugin {
         for (Player player : Bukkit.getOnlinePlayers()) {
             player.setMaxHealth(ConfigConst.DEF_HP);
             player.setFoodLevel(ConfigConst.DEF_FOOD_LEVEL);
+            player.setWalkSpeed(ConfigConst.DEF_WALKSPEED);
         }
     }
 

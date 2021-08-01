@@ -13,14 +13,15 @@
     - restart
         プラグイン再起動
     - conf
-        - period <trik>
+        - period [10-300]
           1年経過にかかるtrik数 [default: 100]
-        - init_age <age>
+        - init_age [0-99]
           リスポーン時の年齢 [default: 0]
-        - rejuvenate_age <age>
+        - rejuvenate_age [0-99]
           若返りアイテムを食べて若返る年齢 [default: 10]
     - set <baby|kids|young|adult|elderly> <playerName>
       指定したユーザーの世代を固定します。世代固定したユーザーは年数が経過しても歳を取りません。
     - unset <playerName>
       ユーザーの世代固定を解除します。
+      
     

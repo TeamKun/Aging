@@ -143,7 +143,7 @@ public class AgingCommandExecutor implements CommandExecutor, TabCompleter {
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
-        if (!CommandConst.MAIN_COMMAND.equals(command.getName())) {
+       if (!CommandConst.MAIN_COMMAND.equals(command.getName())) {
             return new ArrayList<>();
         }
 
