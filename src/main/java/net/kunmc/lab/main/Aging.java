@@ -341,6 +341,16 @@ public final class Aging extends JavaPlugin {
     }
 
     /**
+     * 発言時にローマ字をつけるかチェックする
+     *
+     * @param player プレイヤー
+     * @return boolean true:ローマ字使用可能, false:使用不可
+     */
+    public boolean isNotUseAlphabet(Player player) {
+        return !getConfig().getBoolean(getGeneration(player).getPathName() + ConfigConst.USE_ALPHABET);
+    }
+
+    /**
      * 発言時にひらがなを「あはまわ行」へ変換するかチェックする
      *
      * @param player プレイヤー

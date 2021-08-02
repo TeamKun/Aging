@@ -15,6 +15,7 @@ public final class ConfigConst {
     public final static String ENDWORD = "endword";
     public final static String USE_CHINESE_CHARACTER = "useKanji";
     public final static String CHECK_HIRAGANA = "checkHiragana";
+    public final static String USE_ALPHABET = "useAlphabet";
 
     public final static String INIT_AGE = "init_age";
     public final static String REJUVENATE_AGE = "rejuvenate_age";

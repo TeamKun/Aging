@@ -158,6 +158,13 @@ public class PlayerEventListener implements Listener {
             return;
         }
 
+        // ローマ字の入力制限
+        if (plugin.isNotUseAlphabet(player) && hasAlphabet(message)) {
+            player.sendMessage(ChatColor.RED + "ローマ字は忘れてしまって発言できない！");
+            e.setCancelled(true);
+            return;
+        }
+
         // 使用できないひらがなを置換する
         if (plugin.isCheckHiragana(player)) {
             e.setMessage(HiraganaConverter.convertText(message));
@@ -183,4 +190,7 @@ public class PlayerEventListener implements Listener {
         plugin.initPlayer(e.getPlayer());
     }
 
+    private boolean hasAlphabet(String text) {
+        return text.matches(".*[A-zＡ-ｚ].*");
+    }
 }
