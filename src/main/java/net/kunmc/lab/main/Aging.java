@@ -6,6 +6,7 @@ import net.kunmc.lab.constants.CommandConst;
 import net.kunmc.lab.constants.ConfigConst;
 import net.kunmc.lab.constants.Generation;
 import net.kunmc.lab.listener.PlayerEventListener;
+import net.kunmc.lab.task.ActionbarTask;
 import net.kunmc.lab.task.AgingTask;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -24,6 +25,7 @@ import java.util.logging.Level;
 public final class Aging extends JavaPlugin {
     public static Aging plugin;
     private BukkitTask task;
+    private BukkitTask actionBarTask;
     private PlayerEventListener listener;
     private AgingScoreBoard scoreboard;
 
@@ -83,6 +85,11 @@ public final class Aging extends JavaPlugin {
         }
         task.cancel();
         task = null;
+        if (actionBarTask == null) {
+            return false;
+        }
+        actionBarTask.cancel();
+        actionBarTask = null;
         return true;
     }
 
@@ -97,6 +104,7 @@ public final class Aging extends JavaPlugin {
         }
         int period = getConfig().getInt(ConfigConst.PERIOD);
         task = new AgingTask(this).runTaskTimer(this, period, period);
+        actionBarTask = new ActionbarTask(this).runTaskTimer(this, 0, 10);
         return true;
     }
 
@@ -188,9 +196,6 @@ public final class Aging extends JavaPlugin {
             return;
         }
         setPlayerAge(player, age);
-
-        // 各種表示
-        Generation.Type generation = getGeneration(player);
     }
 
     /**
