@@ -34,7 +34,7 @@ public class AgingCommandExecutor implements CommandExecutor, TabCompleter {
             return true;
         }
         if (args.length < 1) {
-            sender.sendMessage(ChatColor.RED + "usage: \n/aging <" + CommandConst.COMMAND_START + "|" + CommandConst.COMMAND_STOP + "|" + CommandConst.COMMAND_CONF + "|" + CommandConst.COMMAND_RESTART + "|" + CommandConst.COMMAND_SET + "|" + CommandConst.COMMAND_UNSET + ">");
+            sender.sendMessage(ChatColor.RED + "error: コマンドが間違っています \nusage: /aging <" + CommandConst.COMMAND_START + " | " + CommandConst.COMMAND_STOP + " | " + CommandConst.COMMAND_CONF + " | " + CommandConst.COMMAND_RESTART + " | " + CommandConst.COMMAND_SET + " | " + CommandConst.COMMAND_UNSET + " | " + CommandConst.COMMAND_INFO +">");
             return true;
         }
 
@@ -42,7 +42,7 @@ public class AgingCommandExecutor implements CommandExecutor, TabCompleter {
         switch (args[0]) {
             case CommandConst.COMMAND_START:
                 if (!(args.length == 1)) {
-                    sender.sendMessage(ChatColor.RED + "usage: \n/aging <" + CommandConst.COMMAND_START + "|" + CommandConst.COMMAND_STOP + "|" + CommandConst.COMMAND_CONF + "|" + CommandConst.COMMAND_RESTART + "|" + CommandConst.COMMAND_SET + "|" + CommandConst.COMMAND_UNSET + ">");
+                    sender.sendMessage(ChatColor.RED + "error: 引数が間違っています \nusage: /aging " + CommandConst.COMMAND_START);
                     return true;
                 }
                 if (!this.plugin.start()) {
@@ -53,7 +53,7 @@ public class AgingCommandExecutor implements CommandExecutor, TabCompleter {
                 break;
             case CommandConst.COMMAND_STOP:
                 if (!(args.length == 1)) {
-                    sender.sendMessage(ChatColor.RED + "usage: \n/aging <" + CommandConst.COMMAND_START + "|" + CommandConst.COMMAND_STOP + "|" + CommandConst.COMMAND_CONF + "|" + CommandConst.COMMAND_RESTART + "|" + CommandConst.COMMAND_SET + "|" + CommandConst.COMMAND_UNSET + ">");
+                    sender.sendMessage(ChatColor.RED + "error: 引数が間違っています \nusage: /aging " + CommandConst.COMMAND_STOP);
                     return true;
                 }
                 if (!this.plugin.stop()) {
@@ -64,7 +64,7 @@ public class AgingCommandExecutor implements CommandExecutor, TabCompleter {
                 break;
             case CommandConst.COMMAND_SUSPEND:
                 if (!(args.length == 1)) {
-                    sender.sendMessage(ChatColor.RED + "usage: \n/aging <" + CommandConst.COMMAND_SUSPEND + " | " + CommandConst.COMMAND_RESTART + ">");
+                    sender.sendMessage(ChatColor.RED + "error: 引数が間違っています \nusage: /aging " + CommandConst.COMMAND_SUSPEND);
                     return true;
                 }
                 if (!this.plugin.suspend()) {
@@ -75,7 +75,7 @@ public class AgingCommandExecutor implements CommandExecutor, TabCompleter {
                 break;
             case CommandConst.COMMAND_RESOME:
                 if (!(args.length == 1)) {
-                    sender.sendMessage(ChatColor.RED + "usage: \n/aging <" + CommandConst.COMMAND_SUSPEND + " | " + CommandConst.COMMAND_RESTART + ">");
+                    sender.sendMessage(ChatColor.RED + "error: 引数が間違っています \nusage: /aging " + CommandConst.COMMAND_RESOME);
                     return true;
                 }
                 if (!this.plugin.resome()) {
@@ -86,11 +86,11 @@ public class AgingCommandExecutor implements CommandExecutor, TabCompleter {
                 break;
             case CommandConst.COMMAND_RESTART:
                 if (!(args.length == 1)) {
-                    sender.sendMessage(ChatColor.RED + "usage: \n/aging <" + CommandConst.COMMAND_START + "|" + CommandConst.COMMAND_STOP + "|" + CommandConst.COMMAND_CONF + "|" + CommandConst.COMMAND_RESTART + "|" + CommandConst.COMMAND_SET + "|" + CommandConst.COMMAND_UNSET + ">");
+                    sender.sendMessage(ChatColor.RED + "error: 引数が間違っています \nusage: /aging " + CommandConst.COMMAND_RESTART);
                     return true;
                 }
                 if (!this.plugin.restart()) {
-                    sender.sendMessage(ChatColor.RED + "error: 老化プラグインの再起動に失敗しました。stop->startを手動で実行してください。");
+                    sender.sendMessage(ChatColor.RED + "error: 老化プラグインの再起動に失敗しました \nstop->startを手動で実行してください");
                     return true;
                 }
                 sender.sendMessage(ChatColor.GREEN + "info: 老化プラグインが再起動しました");
@@ -104,12 +104,12 @@ public class AgingCommandExecutor implements CommandExecutor, TabCompleter {
                 }
 
                 if (!message.isEmpty()) {
-                    sender.sendMessage(ChatColor.RED + "error: " + message);
+                    sender.sendMessage(ChatColor.RED + message);
                     break;
                 }
                 message = setConf(args);
                 if (!message.isEmpty()) {
-                    sender.sendMessage(ChatColor.GREEN + "info: " + message);
+                    sender.sendMessage(ChatColor.GREEN + message);
                 }
                 break;
             case CommandConst.COMMAND_SET:
@@ -119,30 +119,30 @@ public class AgingCommandExecutor implements CommandExecutor, TabCompleter {
                 }
                 message = checkSetArgs(args);
                 if (!message.isEmpty()) {
-                    sender.sendMessage(ChatColor.RED + "error: " + message);
+                    sender.sendMessage(ChatColor.RED + message);
                     break;
                 }
                 message = setPlayerGeneration(args);
-                sender.sendMessage(ChatColor.GREEN + "info: " + message);
+                sender.sendMessage(ChatColor.GREEN + message);
                 break;
             case CommandConst.COMMAND_UNSET:
                 message = checkUnsetArgs(args);
                 if (!message.isEmpty()) {
-                    sender.sendMessage(ChatColor.RED + "error: " + message);
+                    sender.sendMessage(ChatColor.RED + message);
                     break;
                 }
                 message = unsetPlayerGeneration(args);
-                sender.sendMessage(ChatColor.GREEN + "info: " + message);
+                sender.sendMessage(ChatColor.GREEN + message);
                 break;
             case CommandConst.COMMAND_INFO:
                 if (!(args.length == 1)) {
-                    sender.sendMessage(ChatColor.RED + "usage: \n/aging " + CommandConst.COMMAND_INFO );
+                    sender.sendMessage(ChatColor.RED + "error: コマンドが間違っています \nusage: /aging " + CommandConst.COMMAND_INFO);
                     return true;
                 }
                 plugin.info(sender);
                 break;
             default:
-                sender.sendMessage(ChatColor.RED + "usage: \n/aging <" + CommandConst.COMMAND_START + "|" + CommandConst.COMMAND_STOP + "|" + CommandConst.COMMAND_CONF + "|" + CommandConst.COMMAND_RESTART + "|" + CommandConst.COMMAND_SET + "|" + CommandConst.COMMAND_UNSET + ">");
+                sender.sendMessage(ChatColor.RED + "usage: /aging <" + CommandConst.COMMAND_START + " | " + CommandConst.COMMAND_STOP + " | " + CommandConst.COMMAND_CONF + " | " + CommandConst.COMMAND_RESTART + " | " + CommandConst.COMMAND_SET + " | " + CommandConst.COMMAND_UNSET + " | " + CommandConst.COMMAND_INFO +">");
                 break;
         }
         return true;
@@ -228,13 +228,13 @@ public class AgingCommandExecutor implements CommandExecutor, TabCompleter {
      */
     private String checkSetArgs(String[] args) {
         if (!(3 == args.length)) {
-            return "引数の数が正しくありません";
+            return "error: 引数が正しくありません \nusage: /aging " + CommandConst.COMMAND_SET + " <baby | kids | young | adult | elderly> <playerName>";
         }
         if (!isGenerationName(args[1])) {
-            return "コマンドが間違っています";
+            return "error: コマンドが間違っています \nusage: /aging " + CommandConst.COMMAND_SET + " <baby | kids | young | adult | elderly> <playerName>";
         }
         if (getPlayerName().noneMatch(e -> e.equals(args[2]))) {
-            return "ユーザー名が間違っています";
+            return "error: ユーザー名が間違っています";
         }
         return "";
     }
@@ -247,10 +247,10 @@ public class AgingCommandExecutor implements CommandExecutor, TabCompleter {
      */
     private String checkUnsetArgs(String[] args) {
         if (!(2 == args.length)) {
-            return "引数の数が正しくありません";
+            return "error: 引数が正しくありません \nusage: /aging " + CommandConst.COMMAND_UNSET + "<playerName>";
         }
         if (getPlayerName().noneMatch(e -> e.equals(args[1]))) {
-            return "ユーザー名が間違っています";
+            return "error: ユーザー名が間違っています";
         }
         return "";
     }
@@ -258,36 +258,52 @@ public class AgingCommandExecutor implements CommandExecutor, TabCompleter {
     /**
      * confコマンドの引数チェック
      *
-     * @param args [0]:conf, [1]:[period|init_age|rejuvenate_age|rejuvenate_item], [2]:[trik|age|itemName]
+     * @param args [0]:conf, [1]:[period|init_age|rejuvenate_age], [2]:[trik|age]
      * @return コマンド不正がない場合は空文字, 引数エラーがある場合はエラーメッセージ
      * @throws NumberFormatException 引数の数値変換による例外
      */
     private String checkConfArgs(String[] args) throws NumberFormatException {
         // コマンドが間違っている
-        if (!(ConfigConst.PERIOD.equals(args[1]) || ConfigConst.INIT_AGE.equals(args[1]) || ConfigConst.REJUVENATE_AGE.equals(args[1]))) {
-            return "コマンドが間違っています";
+        if (args.length < 2 || !(ConfigConst.PERIOD.equals(args[1]) || ConfigConst.INIT_AGE.equals(args[1]) || ConfigConst.REJUVENATE_AGE.equals(args[1]))) {
+            return "error: コマンドが間違っています \nusage: /aging " + CommandConst.COMMAND_CONF + " <" + ConfigConst.PERIOD + " [" +  CommandConst.MIN_INIT_PERIOD + "-" + CommandConst.MAX_INIT_PERIOD + "] | "
+                    + ConfigConst.INIT_AGE + " [" + CommandConst.MIN_INIT_AGE + "-" + CommandConst.MAX_INIT_AGE + "] | "
+                    + ConfigConst.REJUVENATE_AGE + " [" + CommandConst.MIN_REJUVENATE_AGE + "-" + CommandConst.MAX_REJUVENATE_AGE +"]>";
         }
 
-        // プラグイン設定値の処理
-        if (!(3 == args.length)) {
-            return "引数の数が正しくありません";
-        }
         if (ConfigConst.PERIOD.equals(args[1])) {
+            if (!(3 == args.length)) {
+                return "error: 引数の数が正しくありません \nusage: /aging "+ CommandConst.COMMAND_CONF + " " + ConfigConst.PERIOD + " [" + CommandConst.MIN_INIT_PERIOD +  "-" + CommandConst.MAX_INIT_PERIOD + "]";
+            }
+            if (!args[2].chars().allMatch(Character::isDigit)) {
+                return "error: 数値を指定してください \nusage: /aging " + CommandConst.COMMAND_CONF + " " + ConfigConst.PERIOD + " [" + CommandConst.MIN_INIT_PERIOD +  "-" + CommandConst.MAX_INIT_PERIOD + "]";
+            }
             int trik = Integer.parseInt(args[2]);
             if (trik < CommandConst.MIN_INIT_PERIOD || CommandConst.MAX_INIT_PERIOD < trik) {
-                return "trikは" + CommandConst.MIN_INIT_PERIOD + "〜" + CommandConst.MAX_INIT_PERIOD + "の間で設定してください";
+                return "error: trikは" + CommandConst.MIN_INIT_PERIOD + "〜" + CommandConst.MAX_INIT_PERIOD + "の間で設定してください";
             }
         }
         if (ConfigConst.INIT_AGE.equals(args[1])) {
+            if (!(3 == args.length)) {
+                return "error: 引数の数が正しくありません \nusage: /aging "+ CommandConst.COMMAND_CONF + " " + ConfigConst.INIT_AGE + " [" + CommandConst.MIN_INIT_AGE +  "-" + CommandConst.MAX_INIT_AGE + "]";
+            }
+            if (!args[2].chars().allMatch(Character::isDigit)) {
+                return "error: 数値を指定してください \nusage: /aging " + CommandConst.COMMAND_CONF + " " + ConfigConst.INIT_AGE + " [" + CommandConst.MIN_INIT_AGE +  "-" + CommandConst.MAX_INIT_AGE + "]";
+            }
             int initAge = Integer.parseInt(args[2]);
             if (initAge < CommandConst.MIN_INIT_AGE || CommandConst.MAX_INIT_AGE < initAge) {
-                return "init_ageは" + CommandConst.MIN_INIT_AGE + "〜" + CommandConst.MAX_INIT_AGE + "の間で設定してください";
+                return "error: init_ageは" + CommandConst.MIN_INIT_AGE + "〜" + CommandConst.MAX_INIT_AGE + "の間で設定してください";
             }
         }
         if (ConfigConst.REJUVENATE_AGE.equals(args[1])) {
+            if (!(3 == args.length)) {
+                return "error: 引数の数が正しくありません \nusage: /aging "+ CommandConst.COMMAND_CONF + " " + ConfigConst.REJUVENATE_AGE + " [" + CommandConst.MIN_REJUVENATE_AGE +  "-" + CommandConst.MAX_REJUVENATE_AGE + "]";
+            }
+            if (!args[2].chars().allMatch(Character::isDigit)) {
+                return "error: 数値を指定してください \nusage: /aging " + CommandConst.COMMAND_CONF + " " + ConfigConst.REJUVENATE_AGE + " [" + CommandConst.MIN_REJUVENATE_AGE +  "-" + CommandConst.MAX_REJUVENATE_AGE + "]";
+            }
             int initAge = Integer.parseInt(args[2]);
             if (initAge < CommandConst.MIN_REJUVENATE_AGE || CommandConst.MAX_REJUVENATE_AGE < initAge) {
-                return "rejuvenate_ageは" + CommandConst.MIN_REJUVENATE_AGE + "〜" + CommandConst.MAX_REJUVENATE_AGE + "の間で設定してください";
+                return "error: rejuvenate_ageは" + CommandConst.MIN_REJUVENATE_AGE + "〜" + CommandConst.MAX_REJUVENATE_AGE + "の間で設定してください";
             }
         }
         return "";
@@ -295,7 +311,7 @@ public class AgingCommandExecutor implements CommandExecutor, TabCompleter {
 
     /**
      * 老化プラグインの各種設定値を変更する<br>
-     * 事前にcheckConfArgs()で値を検証してから呼び出すこと。
+     * 事前にcheckConfArgs()で値を検証してから呼び出すこと
      *
      * @param args [0]:conf, [1]:[period|init_age|rejuvenate_age|rejuvenate_item], [2]:[trik|age|itemName]
      * @return 設定値変更の成功メッセージ
@@ -305,19 +321,19 @@ public class AgingCommandExecutor implements CommandExecutor, TabCompleter {
         if (ConfigConst.PERIOD.equals(args[1])) {
             int trik = Integer.parseInt(args[2]);
             plugin.setConfig(ConfigConst.PERIOD, trik);
-            return "1年経過のtrik数を " + trik + " に変更しました。起動中の場合はrestartで反映できます。";
+            return "info: 1年経過のtrik数を " + trik + " に変更しました　\n起動中の場合はrestartで反映できます　";
         }
 
         if (ConfigConst.INIT_AGE.equals(args[1])) {
             int init_age = Integer.parseInt(args[2]);
             plugin.setConfig(ConfigConst.INIT_AGE, init_age);
-            return "リスポーン時の初期年齢を " + init_age + " に変更しました";
+            return "info: リスポーン時の初期年齢を " + init_age + " に変更しました";
         }
 
         if (ConfigConst.REJUVENATE_AGE.equals(args[1])) {
             int rejuvenate_age = Integer.parseInt(args[2]);
             plugin.setConfig(ConfigConst.REJUVENATE_AGE, rejuvenate_age);
-            return "若返る年齢を " + rejuvenate_age + " に変更しました";
+            return "info: 若返る年齢を " + rejuvenate_age + " に変更しました";
         }
         return "";
     }
@@ -334,7 +350,7 @@ public class AgingCommandExecutor implements CommandExecutor, TabCompleter {
 
         plugin.setPlayerAge(player, generation.min_age);
         plugin.setIsAging(player, false);
-        return args[2] + " を " + generation.dispName + " に世代固定しました";
+        return "info: " + args[2] + " を " + generation.dispName + " に世代固定しました";
     }
 
     /**
@@ -346,7 +362,7 @@ public class AgingCommandExecutor implements CommandExecutor, TabCompleter {
     private String unsetPlayerGeneration(String[] args) {
         Player player = Bukkit.getPlayer(args[1]);
         plugin.setIsAging(player, true);
-        return args[1] + " の世代固定を解除しました ";
+        return "info: " + args[1] + " の世代固定を解除しました ";
     }
 
 }
