@@ -134,6 +134,13 @@ public class AgingCommandExecutor implements CommandExecutor, TabCompleter {
                 message = unsetPlayerGeneration(args);
                 sender.sendMessage(ChatColor.GREEN + "info: " + message);
                 break;
+            case CommandConst.COMMAND_INFO:
+                if (!(args.length == 1)) {
+                    sender.sendMessage(ChatColor.RED + "usage: \n/aging " + CommandConst.COMMAND_INFO );
+                    return true;
+                }
+                plugin.info(sender);
+                break;
             default:
                 sender.sendMessage(ChatColor.RED + "usage: \n/aging <" + CommandConst.COMMAND_START + "|" + CommandConst.COMMAND_STOP + "|" + CommandConst.COMMAND_CONF + "|" + CommandConst.COMMAND_RESTART + "|" + CommandConst.COMMAND_SET + "|" + CommandConst.COMMAND_UNSET + ">");
                 break;
@@ -149,8 +156,8 @@ public class AgingCommandExecutor implements CommandExecutor, TabCompleter {
 
         if (1 == args.length) {
             return (sender.hasPermission(CommandConst.MAIN_COMMAND)
-                    ? Stream.of(CommandConst.COMMAND_START, CommandConst.COMMAND_STOP, CommandConst.COMMAND_CONF, CommandConst.COMMAND_SET, CommandConst.COMMAND_UNSET, CommandConst.COMMAND_RESTART)
-                    : Stream.of(CommandConst.COMMAND_START, CommandConst.COMMAND_STOP, CommandConst.COMMAND_CONF, CommandConst.COMMAND_SET, CommandConst.COMMAND_UNSET, CommandConst.COMMAND_RESTART)
+                    ? Stream.of(CommandConst.COMMAND_START, CommandConst.COMMAND_STOP, CommandConst.COMMAND_CONF, CommandConst.COMMAND_SET, CommandConst.COMMAND_UNSET, CommandConst.COMMAND_RESTART, CommandConst.COMMAND_INFO)
+                    : Stream.of(CommandConst.COMMAND_START, CommandConst.COMMAND_STOP, CommandConst.COMMAND_CONF, CommandConst.COMMAND_SET, CommandConst.COMMAND_UNSET, CommandConst.COMMAND_RESTART, CommandConst.COMMAND_INFO)
             ).filter(e -> e.startsWith(args[0])).collect(Collectors.toList());
         }
 

@@ -8,9 +8,13 @@ import net.kunmc.lab.constants.Generation;
 import net.kunmc.lab.listener.PlayerEventListener;
 import net.kunmc.lab.task.ActionbarTask;
 import net.kunmc.lab.task.AgingTask;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -20,6 +24,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import java.util.*;
+import java.util.List;
 import java.util.logging.Level;
 
 public final class Aging extends JavaPlugin {
@@ -110,6 +115,45 @@ public final class Aging extends JavaPlugin {
 
     public boolean restart() {
         return suspend() && resome();
+    }
+
+    /**
+     * infoコマンド用の設定値を返す
+     * @return
+     */
+    public void info(CommandSender sender) {
+        sender.sendMessage("1年経過にかかるTrik数: " + getConfig().getInt(ConfigConst.PERIOD));
+        sender.sendMessage("リスポーン時の年齢: " + getConfig().getInt(ConfigConst.INIT_AGE));
+        sender.sendMessage("若返る年齢: " + getConfig().getInt(ConfigConst.REJUVENATE_AGE));
+        sender.sendMessage(setPlayerInfo());
+    }
+
+    /**
+     * 世代固定プレイヤーの一覧を返す
+     * @return
+     */
+    private BaseComponent[] setPlayerInfo() {
+        // 世代固定プレイヤーを取得
+        ComponentBuilder component = new ComponentBuilder("世代固定プレイヤー: ");
+        if (!isStarted()) {
+            component.append("なし").color(ChatColor.WHITE);
+            return component.create();
+        }
+
+        boolean isSetGenerationPLayer = false;
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            Generation.Type generation = getGeneration(player);
+            if(getIsAging(player)) {
+                continue;
+            }
+            isSetGenerationPLayer = true;
+            component.append(player.getName() + "(" + generation.dispName + ") ").color(generation.md_5Color);
+        }
+        // 世代固定プレイヤーがいない
+        if(!isSetGenerationPLayer) {
+            component.append("なし").color(ChatColor.WHITE);
+        }
+        return component.create();
     }
 
     /**

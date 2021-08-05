@@ -11,6 +11,7 @@ public final class CommandConst {
     public final static String COMMAND_CONF = "conf";
     public final static String COMMAND_SET = "set";
     public final static String COMMAND_UNSET = "unset";
+    public final static String COMMAND_INFO = "info";
 
     public final static int MIN_INIT_PERIOD = 10;
     public final static int MAX_INIT_PERIOD = 300;
