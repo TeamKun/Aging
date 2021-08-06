@@ -308,7 +308,9 @@ public final class Aging extends JavaPlugin {
 
             // 空腹
             int foodLevel = getConfig().getInt(generation.getPathName() + ConfigConst.FOOD_LEVEL);
-            player.setFoodLevel(foodLevel);
+            if (foodLevel < player.getFoodLevel()) {
+                player.setFoodLevel(foodLevel);
+            }
 
         } catch (IllegalArgumentException ie) {
             getServer().getLogger().log(Level.WARNING, player + " :歩行速度の引数が範囲外の数値です[(float)-1~1]");
