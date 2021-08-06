@@ -93,9 +93,13 @@ public class PlayerEventListener implements Listener {
             return;
         }
         int foodLevel = plugin.getPlayerFoodLevel(player);
-        if (foodLevel < player.getFoodLevel() + e.getFoodLevel()) {
+        // 空腹度が減る場合
+        if (foodLevel > e.getFoodLevel()) {
+            return;
+        }
+        // 世代別の空腹度上限を超えないように制御する
+        if (foodLevel <= e.getFoodLevel()) {
             e.setFoodLevel(foodLevel);
-            e.setCancelled(true);
         }
     }
 
