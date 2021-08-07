@@ -14,6 +14,7 @@ baby:
   useKanji: true
   checkHiragana: false
   useAlphabet: true
+  regeneration: false
 kids:
   walkspeed: 1.0
   maxhp: 20
@@ -21,6 +22,7 @@ kids:
   useKanji: true
   checkHiragana: false
   useAlphabet: true
+  regeneration: false
 young:
   walkspeed: 0.2
   maxhp: 20
@@ -28,6 +30,7 @@ young:
   useKanji: true
   checkHiragana: false
   useAlphabet: true
+  regeneration: true
 adult:
   walkspeed: 0.2
   maxhp: 14
@@ -35,6 +38,7 @@ adult:
   useKanji: true
   checkHiragana: false
   useAlphabet: true
+  regeneration: false
 elderly:
   walkspeed: 0.1
   maxhp: 8
@@ -49,3 +53,4 @@ elderly:
   useKanji: false
   checkHiragana: true
   useAlphabet: false
+  regeneration: false

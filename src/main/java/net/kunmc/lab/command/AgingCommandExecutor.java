@@ -348,8 +348,8 @@ public class AgingCommandExecutor implements CommandExecutor, TabCompleter {
         Generation.Type generation = Generation.Type.valueOf(args[1].toUpperCase(Locale.ROOT));
         Player player = Bukkit.getPlayer(args[2]);
 
-        plugin.setPlayerAge(player, generation.min_age);
         plugin.setIsAging(player, false);
+        plugin.setPlayerAge(player, generation.min_age);
         return "info: " + args[2] + " を " + generation.dispName + " に世代固定しました";
     }
 

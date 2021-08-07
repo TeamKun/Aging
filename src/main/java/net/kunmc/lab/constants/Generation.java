@@ -35,6 +35,10 @@ public class Generation {
         public String getMessage() {
             return "あなたは " + this.dispName + " になりました";
         }
+
+        public int getRange() {
+            return max_age - min_age + 1;
+        }
     }
 
     /**

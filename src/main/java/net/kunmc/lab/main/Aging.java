@@ -21,6 +21,8 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import java.util.*;
@@ -114,7 +116,14 @@ public final class Aging extends JavaPlugin {
     }
 
     public boolean restart() {
-        return suspend() && resome();
+        suspend();
+        resome();
+        Bukkit.getOnlinePlayers().forEach(p->
+        {
+            removeEffects(p);
+            addEffects(p);
+        });
+        return true;
     }
 
     /**
@@ -271,20 +280,28 @@ public final class Aging extends JavaPlugin {
      */
     public void setPlayerAgeForce(Player player, int age) {
         setAge(player, age);
-        Generation.Type nextGeneration = Generation.getGeneration(age);
+        Generation.Type generation = Generation.getGeneration(age);
 
         // HP
-        double maxHp = getConfig().getDouble(nextGeneration.getPathName() + ConfigConst.MAX_HP);
+        double maxHp = getConfig().getDouble(generation.getPathName() + ConfigConst.MAX_HP);
         player.setMaxHealth(maxHp);
 
         // 空腹
         new BukkitRunnable() {
             @Override
             public void run() {
-                int foodLevel = getConfig().getInt(nextGeneration.getPathName() + ConfigConst.FOOD_LEVEL);
+                int foodLevel = getConfig().getInt(generation.getPathName() + ConfigConst.FOOD_LEVEL);
                 player.setFoodLevel(foodLevel);
             }
         }.runTaskLater(this, 0);
+
+        // リジェネ
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                addForceEffects(player);
+            }
+        }.runTaskLater(this, 1);
     }
 
     /**
@@ -312,11 +329,98 @@ public final class Aging extends JavaPlugin {
                 player.setFoodLevel(foodLevel);
             }
 
+            // リジェネ
+            removeEffects(player);
+            if (getIsAging(player)) {
+                addEffects(player, generation);
+            } else {
+                addForceEffects(player);
+            }
         } catch (IllegalArgumentException ie) {
             getServer().getLogger().log(Level.WARNING, player + " :歩行速度の引数が範囲外の数値です[(float)-1~1]");
         } catch (Exception e) {
             getServer().getLogger().log(Level.WARNING, e.getMessage());
         }
+    }
+
+    /**
+     * 半永久的なリジェネ効果を取得する
+     * @return リジェネ効果
+     */
+    private Collection<PotionEffect> getEffects() {
+        int amplifier = 127;
+        Collection<PotionEffect> effects = new ArrayList<>();
+        getEffectTypes().forEach(e -> effects.add(new PotionEffect(e, Integer.MAX_VALUE, amplifier)));
+        return effects;
+    }
+
+    /**
+     * プレイヤーにリジェネを付与する(1年経過のtrik数変更用)
+     * @param player プレイヤー
+     */
+    public void addEffects(Player player) {
+        boolean isRegeneration = getConfig().getBoolean(getGeneration(player).getPathName() + ConfigConst.REGENERATION);
+        if (!isRegeneration) {
+            return;
+        }
+        Collection effects = getEffects();
+        player.addPotionEffects(effects);
+    }
+
+    /**
+     * プレイヤーにリジェネを付与する
+     * @param player プレイヤー
+     * @param generation 世代
+     */
+    private void addEffects(Player player, Generation.Type generation) {
+        boolean isRegeneration = getConfig().getBoolean(generation.getPathName() + ConfigConst.REGENERATION);
+        if (!isRegeneration) {
+            return;
+        }
+        Collection effects = getEffects();
+        player.addPotionEffects(effects);
+    }
+
+    /**
+     * プレイヤーにリジェネを付与する(世代固定用)
+     * @param player プレイヤー
+     */
+    private void addForceEffects(Player player) {
+        boolean isRegeneration = getConfig().getBoolean(getGeneration(player).getPathName() + ConfigConst.REGENERATION);
+        if (!isRegeneration) {
+            return;
+        }
+        Collection effects = getEffects();
+        player.addPotionEffects(effects);
+    }
+
+    /**
+     * リジェネ効果一覧を取得する
+     * @return 効果一覧
+     */
+    private Collection<PotionEffectType> getEffectTypes() {
+        Collection<PotionEffectType> effects = new ArrayList<>();
+        effects.add(PotionEffectType.CONDUIT_POWER);
+        effects.add(PotionEffectType.DAMAGE_RESISTANCE);
+        effects.add(PotionEffectType.CONDUIT_POWER);
+        effects.add(PotionEffectType.FAST_DIGGING);
+        effects.add(PotionEffectType.FIRE_RESISTANCE);
+        effects.add(PotionEffectType.INCREASE_DAMAGE);
+        effects.add(PotionEffectType.NIGHT_VISION);
+        effects.add(PotionEffectType.SLOW_FALLING);
+        effects.add(PotionEffectType.WATER_BREATHING);
+        return effects;
+    }
+
+    /**
+     * 指定プレイヤーの効果を削除する
+     * @param player プレイヤー
+     */
+    public void removeEffects(Player player) {
+        Collection effects = getEffectTypes();
+        effects.stream()
+                .filter(e -> player.hasPotionEffect((PotionEffectType) e))
+                .forEach(e -> player.removePotionEffect((PotionEffectType) e));
     }
 
     /**
