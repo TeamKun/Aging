@@ -349,9 +349,8 @@ public final class Aging extends JavaPlugin {
      * @return リジェネ効果
      */
     private Collection<PotionEffect> getEffects() {
-        int amplifier = 127;
         Collection<PotionEffect> effects = new ArrayList<>();
-        getEffectTypes().forEach(e -> effects.add(new PotionEffect(e, Integer.MAX_VALUE, amplifier)));
+        getEffectTypes().forEach(e -> effects.add(new PotionEffect(e, Integer.MAX_VALUE, ConfigConst.AMPLIFIER)));
         return effects;
     }
 
@@ -449,7 +448,7 @@ public final class Aging extends JavaPlugin {
         int age = Math.max(getAge(player) - rejuvenateAge, ConfigConst.AGE_0);
         setPlayerAge(player, age);
 
-        return "昆布を食べたので " + rejuvenateAge + "歳若返った！[現在の年齢: " + age + "歳]";
+        return "昆布を食べたので " + rejuvenateAge + "歳若返った！";
     }
 
     /**

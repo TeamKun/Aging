@@ -28,6 +28,9 @@ public final class ConfigConst {
     // 最低年齢
     public final static int AGE_0 = 0;
 
+    // リジェネ
+    public final static int AMPLIFIER = 3;
+
     // デフォルト
     public final static int DEF_FOOD_LEVEL = 20;
     public final static int DEF_HP = 20;
