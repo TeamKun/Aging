@@ -205,6 +205,7 @@ public final class Aging extends JavaPlugin {
         setAge(player, age);
         setGeneration(player, generation);
         setIsAging(player, true);
+        setPlayerGeneration(player, generation);
 
         scoreboard.setShowPlayer(player);
         scoreboard.addTeam(player, generation);
