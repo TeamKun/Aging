@@ -128,7 +128,6 @@ public final class Aging extends JavaPlugin {
 
     /**
      * infoコマンド用の設定値を返す
-     * @return
      */
     public void info(CommandSender sender) {
         sender.sendMessage("1年経過にかかるTrik数: " + getConfig().getInt(ConfigConst.PERIOD));
@@ -139,7 +138,7 @@ public final class Aging extends JavaPlugin {
 
     /**
      * 世代固定プレイヤーの一覧を返す
-     * @return
+     * @return 世代プレイヤー一覧
      */
     private BaseComponent[] setPlayerInfo() {
         // 世代固定プレイヤーを取得
@@ -216,25 +215,24 @@ public final class Aging extends JavaPlugin {
      * オンラインの全プレイヤー老化処理
      */
     public void run() {
-        Collection allPlayer = Bukkit.getOnlinePlayers();
+        Collection<? extends Player> allPlayer = Bukkit.getOnlinePlayers();
         if (1 > allPlayer.size()) {
             return;
         }
 
-        allPlayer.forEach((o_player) -> {
-            Player player = (Player) o_player;
-            if (GameMode.CREATIVE == player.getGameMode()) {
-                return;
+        for (Player o_player : allPlayer) {
+            if (GameMode.CREATIVE == o_player.getGameMode()) {
+                continue;
             }
             // 年齢固定の場合は老化させない
-            if (!getIsAging(player)) {
-                return;
+            if (!getIsAging(o_player)) {
+                continue;
             }
-            if (player.isDead()) {
-                return;
+            if (o_player.isDead()) {
+                continue;
             }
-            aging(player);
-        });
+            aging(o_player);
+        }
     }
 
     /**
@@ -363,7 +361,7 @@ public final class Aging extends JavaPlugin {
         if (!isRegeneration) {
             return;
         }
-        Collection effects = getEffects();
+        Collection<PotionEffect> effects = getEffects();
         player.addPotionEffects(effects);
     }
 
@@ -377,7 +375,7 @@ public final class Aging extends JavaPlugin {
         if (!isRegeneration) {
             return;
         }
-        Collection effects = getEffects();
+        Collection<PotionEffect> effects = getEffects();
         player.addPotionEffects(effects);
     }
 
@@ -390,7 +388,7 @@ public final class Aging extends JavaPlugin {
         if (!isRegeneration) {
             return;
         }
-        Collection effects = getEffects();
+        Collection<PotionEffect> effects = getEffects();
         player.addPotionEffects(effects);
     }
 
@@ -417,10 +415,10 @@ public final class Aging extends JavaPlugin {
      * @param player プレイヤー
      */
     public void removeEffects(Player player) {
-        Collection effects = getEffectTypes();
+        Collection<PotionEffectType> effects = getEffectTypes();
         effects.stream()
-                .filter(e -> player.hasPotionEffect((PotionEffectType) e))
-                .forEach(e -> player.removePotionEffect((PotionEffectType) e));
+                .filter(player::hasPotionEffect)
+                .forEach(player::removePotionEffect);
     }
 
     /**
